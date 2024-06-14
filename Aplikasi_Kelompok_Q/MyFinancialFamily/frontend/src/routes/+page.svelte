@@ -1,11 +1,13 @@
 <script>
  import { goto } from '$app/navigation';
-
+  import { userStore } from './store'
   let email = "";
   let password = "";
   let rememberMe = false;
+  let user = {};
 
   async function handleLogin() {
+    localStorage.clear()
     const credentials = {
       Email: email,
       Password: password
@@ -23,6 +25,8 @@
       if (response.ok) {
         const result = await response.json();
         console.log("Login successful", result);
+        //simpan datauser di store
+        userStore.set(result.user);
         goto('home');
       } else if (response.status === 400) {
         alert("Incorrect password");

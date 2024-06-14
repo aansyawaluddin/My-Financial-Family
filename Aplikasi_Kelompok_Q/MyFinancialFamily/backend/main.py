@@ -65,12 +65,22 @@ def verify_password(plain_password: str, hashed_password: str):
 
 @app.post("/login/")
 async def login(user: UserLogin):
-    mycursor.execute("SELECT UserID, Password FROM Users WHERE Email = %s", (user.Email,))
+    mycursor.execute("SELECT UserID, Username, Fullname, Gender, Email, Role, Password FROM Users WHERE Email = %s", (user.Email,))
     result = mycursor.fetchone()
     if result:
-        user_id, hashed_password = result
+        userid, username, fullname, gender, email, role, hashed_password = result
         if verify_password(user.Password, hashed_password):
-            return {"message": "Login successful", "UserID": user_id}
+            return {
+                "message": "Login successful",
+                "user": {
+                    "UserID": userid,
+                    "Username": username,
+                    "Fullname": fullname,
+                    "Gender": gender,
+                    "Email": email,
+                    "Role": role
+                }
+            }
         else:
             raise HTTPException(status_code=400, detail="Incorrect password")
     else:

@@ -1,6 +1,18 @@
 <!-- src/Sidebar.svelte -->
 <script>
+  import { userStore } from '../store';
+
   export let active = 'sidebar';
+
+  let user = {};
+
+  // Subscribe to the store to get user data
+  userStore.subscribe(value => {
+    user = value || {};
+});
+
+  
+
 </script>
 
 <style>
@@ -71,7 +83,7 @@
   <div class="profile">
     <img src="path/to/profile.jpg" alt="Profile Picture" />
     <div>
-      <div>Andi muh Haikal</div>
+      <div>{user.Username}</div>
       <a href="#">View profile</a>
     </div>
   </div>

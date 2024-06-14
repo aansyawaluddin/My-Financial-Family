@@ -2,6 +2,15 @@
 <script>
   export const active = 'home';
   import Sidebar from '../sidebar/+page.svelte';
+  import { userStore } from '../store';
+
+
+  let user = {};
+
+  // Subscribe to the store to get user data
+  userStore.subscribe(value => {
+    user = value || {};
+});
 </script>
 
 <style>
@@ -20,7 +29,7 @@
 <div class="home">
   <Sidebar active="home" />
   <div class="content">
-    <h1>Welcome to the Dashboard</h1>
+    <h1>Welcome to the Dashboard {user.Username}</h1>
     <!-- Add more content here -->
   </div>
 </div>

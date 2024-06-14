@@ -39,6 +39,8 @@
 
       if (response.ok) {
         const result = await response.json();
+        localStorage.setItem('user', JSON.stringify(user)); // Simpan objek user ke localStorage sebagai string JSON
+
         goto('home');
       }else{
         alert("Email is already taken")
