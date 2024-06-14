@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Path
 from pydantic import BaseModel
 import mysql.connector
@@ -14,9 +15,22 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Ganti dengan daftar domain yang diperbolehkan jika perlu
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class UserLogin(BaseModel):
+    Email: str
+    Password: str
+
 # Pydantic model untuk entitas Pengguna (Users)
 class User(BaseModel):
     Username: str
+    Fullname: str
     Password: str
     Gender: str
     Email: str
@@ -45,26 +59,51 @@ class DetailPayment(BaseModel):
     AmountPaid: float
     PaymentDate: str
 
-# Fungsi untuk hashing password menggunakan bcrypt
+# Digunakan Untuk Verifikasi Login User
+def verify_password(plain_password: str, hashed_password: str):
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+@app.post("/login/")
+async def login(user: UserLogin):
+    mycursor.execute("SELECT UserID, Password FROM Users WHERE Email = %s", (user.Email,))
+    result = mycursor.fetchone()
+    if result:
+        user_id, hashed_password = result
+        if verify_password(user.Password, hashed_password):
+            return {"message": "Login successful", "UserID": user_id}
+        else:
+            raise HTTPException(status_code=400, detail="Incorrect password")
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+
+
+    
+# CRUD Untuk Users
+## Fungsi untuk hashing password menggunakan bcrypt
 def hash_password_bcrypt(password: str):
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed_password
-    
-# CRUD Untuk Users
+
 @app.post("/users/")
 async def create_user(user: User):
     # Hash password sebelum disimpan
     hashed_password = hash_password_bcrypt(user.Password)
-
+    
+    # Periksa apakah email sudah ada
+    mycursor.execute("SELECT * FROM Users WHERE Email = %s", (user.Email,))
+    result = mycursor.fetchone()
+    if result:
+        raise HTTPException(status_code=400, detail="Email Is Already Taken")
+    
     # Query SQL untuk menyimpan data pengguna
-    sql = "INSERT INTO Users (Username, Password, Gender, Email, Role) VALUES (%s, %s, %s, %s, %s)"
-    val = (user.Username, hashed_password, user.Gender, user.Email, user.Role)
+    sql = "INSERT INTO Users (Username, Fullname, Password, Gender, Email, Role) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role)
 
+    
     # Eksekusi query
     mycursor.execute(sql, val)
     mydb.commit()
-
     return {"message": "User created successfully"}
 
 @app.get("/users/{UserID}")

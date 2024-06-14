@@ -5,12 +5,35 @@
   let password = "";
   let rememberMe = false;
 
-  function handleLogin() {
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Remember Me:", rememberMe);
-	goto('home');
-    // Tambahkan logika login Anda di sini
+  async function handleLogin() {
+    const credentials = {
+      Email: email,
+      Password: password
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Login successful", result);
+        goto('home');
+      } else if (response.status === 400) {
+        alert("Incorrect password");
+      } else if (response.status === 404) {
+        alert("Email not found");
+      } else {
+        console.error("Login failed", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   }
 </script>
 

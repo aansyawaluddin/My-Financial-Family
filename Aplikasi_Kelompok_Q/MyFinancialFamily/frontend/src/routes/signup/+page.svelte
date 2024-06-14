@@ -1,16 +1,53 @@
+<!-- src/Sidebar.svelte -->
 <script>
-  let name = "";
+  import { goto } from '$app/navigation';
+  let username ="";
+  let fullname = "";
   let email = "";
   let password = "";
+  let gender = ""; // Menambahkan variabel untuk gender
+  let role = ""; // Menambahkan variabel untuk role
   let rememberMe = false;
 
-  function handleSignup() {
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Remember Me:", rememberMe);
-    
+  async function handleSignup() {
+    const user = {
+      Username: username,
+      Fullname: fullname,
+      Password: password,
+      Gender: gender,
+      Email: email.toLowerCase(),
+      Role: role
+    };
+    if (!username || !fullname || !email || !password || !gender || !role) {
+      alert("Please fill in all fields");
+      return;
+    }
+    if (username.length > 10) {
+      alert("Nickname cannot exceed 10 characters");
+      return;
+    }
+
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/users/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        goto('home');
+      }else{
+        alert("Email is already taken")
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   }
+  
 </script>
 
 <style>
@@ -44,23 +81,13 @@
   }
   .form-group input[type="text"],
   .form-group input[type="email"],
-  .form-group input[type="password"] {
+  .form-group input[type="password"],
+  .form-group select { /* Menambahkan gaya untuk select */
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-family: 'Inter', sans-serif;
-  }
-  .form-group .remember-me {
-    display: flex;
-    align-items: center;
-  }
-  .form-group .remember-me input {
-    margin-right: 0.5rem;
-  }
-  .form-group .remember-me label {
-    margin: 0;
-    font-weight: 400;
   }
   .btn-signup {
     width: 100%;
@@ -93,8 +120,12 @@
 <div class="signup-container">
   <div class="signup-header">My Financial Family</div>
   <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" id="name" bind:value={name} />
+    <label for="name">Username</label>
+    <input type="text" id="username" bind:value={username} maxlength="10"  />
+  </div>
+  <div class="form-group">
+    <label for="fullname">Fullname</label>
+    <input type="text" id="fullname" bind:value={fullname}  />
   </div>
   <div class="form-group">
     <label for="email">Email Address</label>
@@ -104,9 +135,20 @@
     <label for="password">Password</label>
     <input type="password" id="password" bind:value={password} />
   </div>
- 
+  <div class="form-group">
+    <label for="gender">Gender</label>
+    <select id="gender" bind:value={gender}>
+      <option value="">Select Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="role">Role</label>
+    <input type="text" id="role" bind:value={role} placeholder="Enter Role" />
+  </div>
   <button class="btn-signup" on:click={handleSignup}>Sign up</button>
   <div class="already-account">
-    <span>Already have an account? </span><a href="/">Sign in here</a> <!-- Menambahkan link ke halaman login -->
+    <span>Already have an account? </span><a href="/">Sign in here</a>
   </div>
 </div>
