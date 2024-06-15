@@ -1,6 +1,6 @@
 <!-- src/Sidebar.svelte -->
 <script>
-  export const active = 'detail_payment';
+  export const active = 'detail-payment';
   import Sidebar from '../sidebar/+page.svelte';
 </script>
 

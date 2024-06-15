@@ -115,14 +115,14 @@
       <a href="home" class="{active === 'home' ? 'active' : ''}">Home</a>
       <a href="expenses" class="{active === 'expenses' ? 'active' : ''}">Expenses</a>
       <a href="transaction" class="{active === 'transaction' ? 'active' : ''}">Transactions</a>
-      <a href="detail_payment" class="{active === 'detail_payment' ? 'active' : ''}">Detail Payment</a>
+      <a href="detail-payment" class="{active === 'detail-payment' ? 'active' : ''}">Detail Payment</a>
       <a href="family" class="{active === 'family' ? 'active' : ''}">Family</a>
     </div>
     <div class="profile">
       <img src="https://i.pinimg.com/474x/a3/f4/bc/a3f4bc0dc7d1b030b782c62d7a4781cf.jpg" alt="Profile Picture" />
       <div>
         <div>{user.Fullname}</div>
-        <a href="#">View profile</a>
+        <a href="profile-user">View profile</a>
       </div>
     </div>
     <button on:click={logout} class="logout">Logout</button>
