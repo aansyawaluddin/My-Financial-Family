@@ -1,5 +1,7 @@
 <!-- src/Sidebar.svelte -->
 <script>
+// @ts-nocheck
+
   export const active = 'home';
   import Sidebar from '../sidebar/+page.svelte';
   import { userStore } from '../store';
@@ -29,7 +31,7 @@
 <div class="home">
   <Sidebar active="home" />
   <div class="content">
-    <h1>Welcome to the Dashboard {user.Username}</h1>
+    <h1>Welcome to the Dashboard {user.Fullname}</h1>
     <!-- Add more content here -->
   </div>
 </div>

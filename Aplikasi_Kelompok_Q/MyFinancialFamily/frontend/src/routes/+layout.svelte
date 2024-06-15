@@ -1,6 +1,16 @@
 <script>
 	import Header from './Header.svelte';
 	import './styles.css';
+
+	//gunanya ini kode agar ketika meng akses"http://localhost:5173/" akan langsung terarahkan ke "http://localhost:5173//login"
+	import { onMount } from 'svelte';
+  	import { goto } from '$app/navigation';
+
+  	onMount(() => {
+    if (window.location.pathname === '/') {
+      goto('/login');
+    }
+  });
 </script>
 
 <div class="app">

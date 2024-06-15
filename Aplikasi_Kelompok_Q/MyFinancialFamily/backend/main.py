@@ -1,9 +1,8 @@
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException, Path
+from fastapi import FastAPI, HTTPException, Path, Query
 from pydantic import BaseModel
 import mysql.connector
 import bcrypt
-
 app = FastAPI()
 
 # Koneksi ke database
@@ -35,6 +34,7 @@ class User(BaseModel):
     Gender: str
     Email: str
     Role: str
+    FamilyEmail: str
 
 # Pydantic model untuk entitas Kategori Pengeluaran
 class ExpenseCategory(BaseModel):
@@ -65,10 +65,10 @@ def verify_password(plain_password: str, hashed_password: str):
 
 @app.post("/login/")
 async def login(user: UserLogin):
-    mycursor.execute("SELECT UserID, Username, Fullname, Gender, Email, Role, Password FROM Users WHERE Email = %s", (user.Email,))
+    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail  FROM Users WHERE Email = %s", (user.Email,))
     result = mycursor.fetchone()
     if result:
-        userid, username, fullname, gender, email, role, hashed_password = result
+        userid, username, fullname, hashed_password, gender, email, role, familyemail= result
         if verify_password(user.Password, hashed_password):
             return {
                 "message": "Login successful",
@@ -76,9 +76,11 @@ async def login(user: UserLogin):
                     "UserID": userid,
                     "Username": username,
                     "Fullname": fullname,
+                    "Password":hashed_password,
                     "Gender": gender,
                     "Email": email,
-                    "Role": role
+                    "Role": role,
+                    "FamilyEmail": familyemail
                 }
             }
         else:
@@ -102,20 +104,41 @@ async def create_user(user: User):
     
     # Periksa apakah email sudah ada
     mycursor.execute("SELECT * FROM Users WHERE Email = %s", (user.Email,))
-    result = mycursor.fetchone()
+    result= mycursor.fetchone()
+    
     if result:
         raise HTTPException(status_code=400, detail="Email Is Already Taken")
+        
     
     # Query SQL untuk menyimpan data pengguna
-    sql = "INSERT INTO Users (Username, Fullname, Password, Gender, Email, Role) VALUES (%s, %s, %s, %s, %s, %s)"
-    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role)
+    sql = "INSERT INTO Users (Username, Fullname, Password, Gender, Email, Role, FamilyEmail) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role, user.FamilyEmail)
 
     
     # Eksekusi query
     mycursor.execute(sql, val)
     mydb.commit()
-    return {"message": "User created successfully"}
+    return {"message": "User created successfully","user": {
+                "UserID": user.Username,
+                "Username": user.Username,
+                "Fullname": user.Fullname,
+                "Password":hashed_password,
+                "Gender": user.Gender,
+                "Email": user.Email,
+                "Role": user.Role,
+                "FamilyEmail": user.FamilyEmail
+            }}
+@app.get("/users/read-all-users")
+async def read_all_user(family_email: str = Query(...)):
+    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail FROM Users WHERE FamilyEmail = %s", (family_email,))
+    result = mycursor.fetchall()
+    if result:
+        users = [{"UserID": row[0], "Username": row[1], "Fullname": row[2], "Password": row[3], "Gender": row[4], "Email": row[5], "Role": row[6], "FamilyEmail": row[7]} for row in result]
+        return {"users": users}
+    else:
+        raise HTTPException(status_code=404, detail="No users found")
 
+## read by id    
 @app.get("/users/{UserID}")
 async def read_user(UserID: int = Path(..., description="Input ID")):
     mycursor.execute("SELECT UserID, Username, Gender, Email, Role FROM Users WHERE UserID = %s", (UserID,))

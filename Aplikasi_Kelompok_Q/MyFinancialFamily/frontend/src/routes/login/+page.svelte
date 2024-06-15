@@ -1,45 +1,58 @@
 <script>
- import { goto } from '$app/navigation';
-  import { userStore } from './store'
-  let email = "";
-  let password = "";
-  let rememberMe = false;
-  let user = {};
-
+  // @ts-nocheck // Mengabaikan pengecekan tipe TypeScript untuk file ini
+  
+  import { goto } from '$app/navigation'; // Mengimpor fungsi goto dari modul navigasi Svelte
+  import { userStore } from '../store'; // Mengimpor store user dari lokasi yang sesuai
+  
+  let email = ""; // Variabel untuk menyimpan nilai input email dari pengguna
+  let password = ""; // Variabel untuk menyimpan nilai input password dari pengguna
+  let rememberMe = false; // Variabel boolean untuk mengontrol opsi "Keep me signed in"
+  // let user = {}; // Variabel untuk menyimpan data pengguna setelah login
+  
+  /**
+   * Fungsi handleLogin digunakan untuk menangani proses login pengguna
+   * Mengirimkan permintaan POST ke endpoint '/login/' dengan kredensial pengguna
+   */
   async function handleLogin() {
-    localStorage.clear()
     const credentials = {
       Email: email,
       Password: password
     };
-
+  
     try {
       const response = await fetch('http://127.0.0.1:8000/login/', {
-        method: 'POST',
+        method: 'POST', // Metode permintaan POST
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json' // Header untuk konten JSON
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials) // Mengubah objek credentials menjadi string JSON
       });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Login successful", result);
-        //simpan datauser di store
-        userStore.set(result.user);
-        goto('home');
-      } else if (response.status === 400) {
-        alert("Incorrect password");
-      } else if (response.status === 404) {
-        alert("Email not found");
-      } else {
-        console.error("Login failed", response.statusText);
+  
+      if (response.ok) { // Jika permintaan berhasil (kode status 200-299)
+        const result = await response.json(); // Mendapatkan data JSON dari respons
+  
+        console.log("Login successful", result); // Pesan log untuk berhasil login
+  
+        localStorage.setItem('isLoggedIn', 'true'); // Menyimpan status login di localStorage
+  
+        // Menyimpan data pengguna ke store (misalnya userStore)
+        userStore.set(result.user); // Disesuaikan dengan struktur respons dari server
+  
+        goto('home'); // Mengarahkan pengguna ke halaman 'home' setelah login berhasil
+      } else if (response.status === 400) { // Jika kesalahan kredensial (kode status 400)
+        alert("Incorrect password"); // Menampilkan pesan kesalahan: password salah
+      } else if (response.status === 404) { // Jika email tidak ditemukan (kode status 404)
+        alert("Email not found"); // Menampilkan pesan kesalahan: email tidak ditemukan
+      } else { // Jika respons lain dengan kode status yang tidak diharapkan
+        console.error("Login failed", response.statusText); // Pesan log untuk kegagalan login
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error); // Menangkap dan menampilkan kesalahan jika terjadi
     }
   }
-</script>
+  
+  </script>
+  
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
