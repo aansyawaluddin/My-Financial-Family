@@ -66,22 +66,15 @@ def verify_password(plain_password: str, hashed_password: str):
 
 @app.post("/login/")
 async def login(user: UserLogin):
-    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail  FROM Users WHERE Email = %s", (user.Email,))
+    mycursor.execute("SELECT UserID, Password FROM Users WHERE Email = %s", (user.Email,))
     result = mycursor.fetchone()
     if result:
-        userid, username, fullname, hashed_password, gender, email, role, familyemail= result
+        userid, hashed_password= result
         if verify_password(user.Password, hashed_password):
             return {
                 "message": "Login successful",
                 "user": {
                     "UserID": userid,
-                    "Username": username,
-                    "Fullname": fullname,
-                    "Password":user.Password,
-                    "Gender": gender,
-                    "Email": email,
-                    "Role": role,
-                    "FamilyEmail": familyemail
                 }
             }
         else:
@@ -141,27 +134,44 @@ async def read_all_user(family_email: str = Query(...)):
 
 ## read by id    
 @app.get("/users/{UserID}")
-async def read_user(UserID: int = Path(..., description="Input ID")):
-    mycursor.execute("SELECT UserID, Username, Gender, Email, Role FROM Users WHERE UserID = %s", (UserID,))
+async def read_user(UserID: int = Path(...)):
+    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail  FROM Users WHERE UserID = %s", (UserID,))
     result = mycursor.fetchone()
     if result:
-        return {"UserID": result[0], "Username": result[1], "Gender": result[2], "Email": result[3], "Role": result[4]}
+        userid, username, fullname, password, gender, email, role, familyemail= result
+        real_password = password
+        return {"message": "Read User successful",
+                "user": {
+                    "UserID": userid,
+                    "Username": username,
+                    "Fullname": fullname,
+                    "Password":real_password,
+                    "Gender": gender,
+                    "Email": email,
+                    "Role": role,
+                    "FamilyEmail": familyemail
+                }}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
 @app.put("/users/{UserID}")
 async def update_user(UserID: int, user: User):
-    # Jika password diubah, hash password baru
-    if user.Password:
-        hashed_password = hash_password_bcrypt(user.Password)
-        sql = "UPDATE Users SET Username = %s, Email = %s, Password = %s, Gender = %s,  FamilyEmail = %s, Role = %s WHERE UserID = %s"
-        val = (user.Username, user.Email, hashed_password, user.Gender, user.FamilyEmail, user.Role, UserID)
-    else:
-        # Jika password tidak diubah, gunakan password lama
-        sql = "UPDATE Users SET Username = %s, Gender = %s, Email = %s, Role = %s WHERE UserID = %s"
-        val = (user.Username, user.Gender, user.Email, user.Role, UserID)
+    # Retrieve the current password from the database
+    mycursor.execute("SELECT Password FROM Users WHERE UserID = %s", (UserID,))
+    current_password = mycursor.fetchone()[0]
 
-    # Eksekusi query
+    # Check if the password has been changed
+    if user.Password != current_password:
+        # If the password has been changed, hash the new password
+        hashed_password = hash_password_bcrypt(user.Password)
+    else:
+        # If the password has not been changed, use the current password
+        hashed_password = current_password
+
+    # Update user data in the database
+    sql = "UPDATE Users SET Username = %s, Fullname = %s, Password = %s, Gender = %s, Email = %s, Role = %s, FamilyEmail = %s WHERE UserID = %s"
+    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role, user.FamilyEmail, UserID)
+
     mycursor.execute(sql, val)
     mydb.commit()
 
@@ -175,6 +185,7 @@ async def update_user(UserID: int, user: User):
                 "Role": user.Role,
                 "FamilyEmail": user.FamilyEmail
             }}
+
 
 @app.delete("/users/{UserID}")
 async def delete_user(UserID: int):

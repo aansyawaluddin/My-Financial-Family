@@ -10,6 +10,31 @@
     if (window.location.pathname === '/') {
       goto('/login');
     }
+	let isLoggedIn = localStorage.getItem("isLoggedIn")
+    
+	if(isLoggedIn == 'true'){
+		if(window.location.pathname === '/login'){
+			localStorage.setItem('isLoggedIn', "false"); // Menyimpan status login di localStorage
+		}
+	}else{
+		goto('/login');
+		
+	}
+
+    // Event listener untuk menangani peristiwa saat tombol back ditekan
+	const handlePopState = () => {
+		localStorage.removeItem('isLoggedIn'); // Hapus status login dari localStorage
+    	localStorage.removeItem('user'); // Hapus status login dari localStorage
+    	localStorage.removeItem('UserID'); // Hapus status login dari localStorage
+    	goto('login'); // Redirect pengguna ke halaman login setelah logout
+    };
+  
+    window.addEventListener('popstate', handlePopState); // Tambahkan event listener untuk tombol back
+  
+    // Membersihkan event listener saat komponen dihancurkan atau tidak lagi digunakan
+    return () => {
+      window.removeEventListener('popstate', handlePopState); // Hapus event listener saat komponen di-unmount
+    };
   });
 </script>
 

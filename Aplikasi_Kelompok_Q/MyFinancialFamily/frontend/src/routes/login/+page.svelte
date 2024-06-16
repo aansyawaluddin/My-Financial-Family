@@ -8,6 +8,7 @@
   let password = ""; // Variabel untuk menyimpan nilai input password dari pengguna
   let rememberMe = false; // Variabel boolean untuk mengontrol opsi "Keep me signed in"
   // let user = {}; // Variabel untuk menyimpan data pengguna setelah login
+  let getUserID = {};
   
   /**
    * Fungsi handleLogin digunakan untuk menangani proses login pengguna
@@ -32,11 +33,12 @@
         const result = await response.json(); // Mendapatkan data JSON dari respons
   
         console.log("Login successful", result); // Pesan log untuk berhasil login
-  
+        getUserID = result.user;
         localStorage.setItem('isLoggedIn', 'true'); // Menyimpan status login di localStorage
+        localStorage.setItem('UserID', getUserID.UserID); // Menyimpan status login di localStorage
   
         // Menyimpan data pengguna ke store (misalnya userStore)
-        userStore.set(result.user); // Disesuaikan dengan struktur respons dari server
+        // userStore.set(result.user); // Disesuaikan dengan struktur respons dari server
   
         goto('home'); // Mengarahkan pengguna ke halaman 'home' setelah login berhasil
       } else if (response.status === 400) { // Jika kesalahan kredensial (kode status 400)

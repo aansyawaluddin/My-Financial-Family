@@ -173,6 +173,6 @@
 
   <button class="btn-signup" on:click={handleSignup}>Sign up</button>
   <div class="already-account">
-    <span>Already have an account? </span><a href="/">Sign in here</a>
+    <span>Already have an account? </span><a href="/login">Sign in here</a>
   </div>
 </div>

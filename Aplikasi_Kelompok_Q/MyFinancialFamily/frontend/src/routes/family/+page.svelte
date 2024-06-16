@@ -24,9 +24,7 @@
       if (response.ok) {
         const result = await response.json();
         familyMembers = result.users;
-      } else {
-        alert("Failed to fetch family members");
-      }
+      } 
     } catch (error) {
       console.error("Error:", error);
     }

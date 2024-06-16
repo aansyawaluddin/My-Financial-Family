@@ -9,51 +9,49 @@
   
   let user = {}; // Objek untuk menyimpan data pengguna yang diperoleh dari store
   
-  // Subscribe to the store to get user data
-  userStore.subscribe(value => {
-    user = value || {}; // Mengupdate nilai objek user saat ada perubahan di store
-  });
-  
   // Menangani peristiwa saat komponen dimuat pertama kali
   onMount(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn'); // Mendapatkan status login dari localStorage
     if (!isLoggedIn) {
       goto('login'); // Jika tidak ada status login, arahkan pengguna ke halaman login
+    } else {
+      getDataUser(); // Panggil fungsi untuk mengambil data pengguna dari backend setelah login berhasil
     }
-  
-    // Event listener untuk menangani peristiwa saat tombol back ditekan
-    const handlePopState = () => {
-      logout(); // Panggil fungsi logout saat tombol back ditekan
-    };
-  
-    window.addEventListener('popstate', handlePopState); // Tambahkan event listener untuk tombol back
-  
-    // Membersihkan event listener saat komponen dihancurkan atau tidak lagi digunakan
-    return () => {
-      window.removeEventListener('popstate', handlePopState); // Hapus event listener saat komponen di-unmount
-    };
+    
   });
-  
+
+  async function getDataUser() {
+    try {
+      const userId = localStorage.getItem('UserID');
+      const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        user = result.user;
+        userStore.set(result.user); // Disesuaikan dengan struktur respons dari server
+      } else {
+        console.error("Failed to fetch user data:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   // Fungsi untuk logout pengguna
   function logout() {
     localStorage.removeItem('isLoggedIn'); // Hapus status login dari localStorage
+    localStorage.removeItem('user'); // Hapus status login dari localStorage
+    localStorage.removeItem('UserID'); // Hapus status login dari localStorage
     goto('login'); // Redirect pengguna ke halaman login setelah logout
   }
-  
-  // Event listener untuk menangani perubahan URL
-  const handleUrlChange = () => {
-    // Periksa apakah referrer tidak dimulai dengan origin yang sama dengan window location
-    if (!document.referrer.startsWith(window.location.origin)) {
-      logout(); // Jika tidak, panggil fungsi logout untuk memastikan logout saat pengguna meninggalkan halaman
-    }
-  };
-  
-  window.addEventListener('beforeunload', handleUrlChange); // Tambahkan event listener untuk perubahan URL
-  
-  </script>
-  
-  
-  <style>
+</script>
+
+<style>
   .sidebar {
     width: 150px;
     height: 92.3vh;
@@ -104,27 +102,27 @@
     background-color: #6B7280;
     color: white;
     text-decoration: none;
+    cursor: pointer;
     text-align: center;
     border-radius: 0.5rem;
   }
-  </style>
-  
-  <div class="sidebar">
-    <div class="logo">My Financial Family</div>
-    <div class="menu">
-      <a href="home" class="{active === 'home' ? 'active' : ''}">Home</a>
-      <a href="expenses" class="{active === 'expenses' ? 'active' : ''}">Expenses</a>
-      <a href="transaction" class="{active === 'transaction' ? 'active' : ''}">Transactions</a>
-      <a href="detail-payment" class="{active === 'detail-payment' ? 'active' : ''}">Detail Payment</a>
-      <a href="family" class="{active === 'family' ? 'active' : ''}">Family</a>
-    </div>
-    <div class="profile">
-      <img src="https://i.pinimg.com/474x/a3/f4/bc/a3f4bc0dc7d1b030b782c62d7a4781cf.jpg" alt="Profile Picture" />
-      <div>
-        <div>{user.Fullname}</div>
-        <a href="profile-user">View profile</a>
-      </div>
-    </div>
-    <button on:click={logout} class="logout">Logout</button>
+</style>
+
+<div class="sidebar">
+  <div class="logo">My Financial Family</div>
+  <div class="menu">
+    <a href="home" class="{active === 'home' ? 'active' : ''}">Home</a>
+    <a href="expenses" class="{active === 'expenses' ? 'active' : ''}">Expenses</a>
+    <a href="transaction" class="{active === 'transaction' ? 'active' : ''}">Transactions</a>
+    <a href="detail-payment" class="{active === 'detail-payment' ? 'active' : ''}">Detail Payment</a>
+    <a href="family" class="{active === 'family' ? 'active' : ''}">Family</a>
   </div>
-  
+  <div class="profile">
+    <img src={user.ProfilePicture} alt="Profile Picture" /> <!-- Ganti dengan sumber gambar profil dari data pengguna -->
+    <div>
+      <div>{user.Fullname}</div> <!-- Tampilkan nama lengkap pengguna -->
+      <a href="profile-user">View profile</a>
+    </div>
+  </div>
+  <button on:click={logout} class="logout">Logout</button>
+</div>

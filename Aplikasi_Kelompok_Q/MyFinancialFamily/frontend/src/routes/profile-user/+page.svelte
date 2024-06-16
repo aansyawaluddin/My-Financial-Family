@@ -7,6 +7,7 @@
   let user = {};
   let updatedUser = {};
   let showUpdatePopup = false;
+  let isPasswordChanged = false;  // New flag to track password changes
 
   // Subscribe to the store to get user data
   userStore.subscribe(value => {
@@ -20,6 +21,7 @@
     if (showUpdatePopup) {
       // Copy the user data to updatedUser when the popup is shown
       updatedUser = { ...user };
+      isPasswordChanged = false;  // Reset flag when opening the popup
     }
   }
 
@@ -30,7 +32,7 @@
       UserID: user.UserID,
       Username: updatedUser.Username,
       Fullname: updatedUser.Fullname,
-      Password: updatedUser.Password,
+      Password: isPasswordChanged ? updatedUser.Password : user.Password, // Use the original password if not changed
       Gender: updatedUser.Gender,
       Email: updatedUser.Email.toLowerCase(), // Convert email to lowercase
       Role: updatedUser.Role,
@@ -75,6 +77,7 @@
     showUpdatePopup = false;
   }
 </script>
+
 
 <style>
   .page-profile {
@@ -236,7 +239,7 @@
         </div>
         <div>
           <label for="password">Password</label>
-          <input type="password" id="password" bind:value={updatedUser.Password} />
+          <input type="password" id="password" bind:value={updatedUser.Password} on:input={() => isPasswordChanged = true} />
         </div>
         <div>
           <label for="gender">Gender</label>
