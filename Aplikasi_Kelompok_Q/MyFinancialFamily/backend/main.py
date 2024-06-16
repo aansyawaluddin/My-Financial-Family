@@ -28,6 +28,7 @@ class UserLogin(BaseModel):
 
 # Pydantic model untuk entitas Pengguna (Users)
 class User(BaseModel):
+    UserID: int
     Username: str
     Fullname: str
     Password: str
@@ -76,7 +77,7 @@ async def login(user: UserLogin):
                     "UserID": userid,
                     "Username": username,
                     "Fullname": fullname,
-                    "Password":hashed_password,
+                    "Password":user.Password,
                     "Gender": gender,
                     "Email": email,
                     "Role": role,
@@ -122,7 +123,7 @@ async def create_user(user: User):
                 "UserID": user.Username,
                 "Username": user.Username,
                 "Fullname": user.Fullname,
-                "Password":hashed_password,
+                "Password":user.Password,
                 "Gender": user.Gender,
                 "Email": user.Email,
                 "Role": user.Role,
@@ -153,8 +154,8 @@ async def update_user(UserID: int, user: User):
     # Jika password diubah, hash password baru
     if user.Password:
         hashed_password = hash_password_bcrypt(user.Password)
-        sql = "UPDATE Users SET Username = %s, Password = %s, Gender = %s, Email = %s, Role = %s WHERE UserID = %s"
-        val = (user.Username, hashed_password, user.Gender, user.Email, user.Role, UserID)
+        sql = "UPDATE Users SET Username = %s, Email = %s, Password = %s, Gender = %s,  FamilyEmail = %s, Role = %s WHERE UserID = %s"
+        val = (user.Username, user.Email, hashed_password, user.Gender, user.FamilyEmail, user.Role, UserID)
     else:
         # Jika password tidak diubah, gunakan password lama
         sql = "UPDATE Users SET Username = %s, Gender = %s, Email = %s, Role = %s WHERE UserID = %s"
@@ -164,7 +165,16 @@ async def update_user(UserID: int, user: User):
     mycursor.execute(sql, val)
     mydb.commit()
 
-    return {"message": "User updated successfully"}
+    return {"message": "User updated successfully","user": {
+                "UserID": user.UserID,
+                "Username": user.Username,
+                "Fullname": user.Fullname,
+                "Password":user.Password,
+                "Gender": user.Gender,
+                "Email": user.Email,
+                "Role": user.Role,
+                "FamilyEmail": user.FamilyEmail
+            }}
 
 @app.delete("/users/{UserID}")
 async def delete_user(UserID: int):
