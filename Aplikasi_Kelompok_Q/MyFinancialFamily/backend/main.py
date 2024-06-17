@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Path, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import mysql.connector
 import bcrypt
 app = FastAPI()
@@ -28,7 +28,7 @@ class UserLogin(BaseModel):
 
 # Pydantic model untuk entitas Pengguna (Users)
 class User(BaseModel):
-    UserID: int
+    UserID: int = Field(default=None)
     Username: str
     Fullname: str
     Password: str
@@ -102,18 +102,25 @@ async def create_user(user: User):
     
     if result:
         raise HTTPException(status_code=400, detail="Email Is Already Taken")
+    
         
     
     # Query SQL untuk menyimpan data pengguna
-    sql = "INSERT INTO Users (Username, Fullname, Password, Gender, Email, Role, FamilyEmail) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role, user.FamilyEmail)
+    sql = "INSERT INTO Users (Username, Fullname, Email, Password, Gender, FamilyEmail, Role ) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    val = (user.Username, user.Fullname, user.Email, hashed_password, user.Gender, user.FamilyEmail, user.Role)
 
     
     # Eksekusi query
     mycursor.execute(sql, val)
     mydb.commit()
+    ## Setelah user dimasukan ke databse,selanjutnya ambil userid utnuk mengambil data usernya lalu ditampilkan di web
+    mycursor.execute("SELECT UserID FROM Users WHERE Email = %s", (user.Email,))
+    result= mycursor.fetchone()
+    
+    if result:
+        userid = result
     return {"message": "User created successfully","user": {
-                "UserID": user.Username,
+                "UserID": userid,
                 "Username": user.Username,
                 "Fullname": user.Fullname,
                 "Password":user.Password,

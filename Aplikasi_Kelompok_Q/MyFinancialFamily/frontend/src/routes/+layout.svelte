@@ -2,39 +2,45 @@
 	import Header from './Header.svelte';
 	import './styles.css';
 
-	//gunanya ini kode agar ketika meng akses"http://localhost:5173/" akan langsung terarahkan ke "http://localhost:5173//login"
+	//gunanya ini kode agar ketika meng akses"http://sessionhost:5173/" akan langsung terarahkan ke "http://sessionhost:5173//login"
 	import { onMount } from 'svelte';
   	import { goto } from '$app/navigation';
 
   	onMount(() => {
-    if (window.location.pathname === '/') {
-      goto('/login');
-    }
-	let isLoggedIn = localStorage.getItem("isLoggedIn")
+		let isLoggedIn = sessionStorage.getItem("isLoggedIn")
     
-	if(isLoggedIn == 'true'){
-		if(window.location.pathname === '/login'){
-			localStorage.setItem('isLoggedIn', "false"); // Menyimpan status login di localStorage
+		if(isLoggedIn == 'true'){
+			if(window.location.pathname === '/login'){
+			sessionStorage.setItem('isLoggedIn', "false"); // Menyimpan status login di sessionStorage
+			}
+		}else{
+			if(window.location.pathname === '/signup'){
+				
+			}else{
+				goto('/login')
+			}
 		}
-	}else{
-		goto('/login');
-		
-	}
+
+		if (window.location.pathname === '/' ) {
+			sessionStorage.setItem('isLoggedIn', "false"); // Menyimpan status login di sessionStorage
+			goto('/login');
+		}
+
 
     // Event listener untuk menangani peristiwa saat tombol back ditekan
-	const handlePopState = () => {
-		localStorage.removeItem('isLoggedIn'); // Hapus status login dari localStorage
-    	localStorage.removeItem('user'); // Hapus status login dari localStorage
-    	localStorage.removeItem('UserID'); // Hapus status login dari localStorage
-    	goto('login'); // Redirect pengguna ke halaman login setelah logout
-    };
-  
-    window.addEventListener('popstate', handlePopState); // Tambahkan event listener untuk tombol back
-  
-    // Membersihkan event listener saat komponen dihancurkan atau tidak lagi digunakan
-    return () => {
-      window.removeEventListener('popstate', handlePopState); // Hapus event listener saat komponen di-unmount
-    };
+		const handlePopState = () => {
+			sessionStorage.removeItem('isLoggedIn'); // Hapus status login dari sessionStorage
+			sessionStorage.removeItem('user'); // Hapus status login dari sessionStorage
+			sessionStorage.removeItem('UserID'); // Hapus status login dari sessionStorage
+			goto('login'); // Redirect pengguna ke halaman login setelah logout
+		};
+	
+		window.addEventListener('popstate', handlePopState); // Tambahkan event listener untuk tombol back
+	
+		// Membersihkan event listener saat komponen dihancurkan atau tidak lagi digunakan
+		return () => {
+		window.removeEventListener('popstate', handlePopState); // Hapus event listener saat komponen di-unmount
+		};
   });
 </script>
 

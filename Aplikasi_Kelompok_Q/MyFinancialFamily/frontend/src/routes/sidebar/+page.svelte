@@ -11,7 +11,7 @@
   
   // Menangani peristiwa saat komponen dimuat pertama kali
   onMount(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn'); // Mendapatkan status login dari localStorage
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn'); // Mendapatkan status login dari sessionStorage
     if (!isLoggedIn) {
       goto('login'); // Jika tidak ada status login, arahkan pengguna ke halaman login
     } else {
@@ -22,7 +22,7 @@
 
   async function getDataUser() {
     try {
-      const userId = localStorage.getItem('UserID');
+      const userId = sessionStorage.getItem('UserID');
       const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
         method: 'GET',
         headers: {
@@ -44,9 +44,9 @@
 
   // Fungsi untuk logout pengguna
   function logout() {
-    localStorage.removeItem('isLoggedIn'); // Hapus status login dari localStorage
-    localStorage.removeItem('user'); // Hapus status login dari localStorage
-    localStorage.removeItem('UserID'); // Hapus status login dari localStorage
+    sessionStorage.removeItem('isLoggedIn'); // Hapus status login dari sessionStorage
+    sessionStorage.removeItem('user'); // Hapus status login dari sessionStorage
+    sessionStorage.removeItem('UserID'); // Hapus status login dari sessionStorage
     goto('login'); // Redirect pengguna ke halaman login setelah logout
   }
 </script>
@@ -118,7 +118,7 @@
     <a href="family" class="{active === 'family' ? 'active' : ''}">Family</a>
   </div>
   <div class="profile">
-    <img src={user.ProfilePicture} alt="Profile Picture" /> <!-- Ganti dengan sumber gambar profil dari data pengguna -->
+    <img src={"https://i.pinimg.com/474x/a3/f4/bc/a3f4bc0dc7d1b030b782c62d7a4781cf.jpg"} alt="Profile Picture" /> <!-- Ganti dengan sumber gambar profil dari data pengguna -->
     <div>
       <div>{user.Fullname}</div> <!-- Tampilkan nama lengkap pengguna -->
       <a href="profile-user">View profile</a>

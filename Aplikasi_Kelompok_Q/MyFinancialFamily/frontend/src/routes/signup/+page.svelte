@@ -1,49 +1,39 @@
-<!-- src/Sidebar.svelte -->
 <script>
-  // Impor fungsi 'goto' dari '$app/navigation' untuk navigasi
   import { goto } from '$app/navigation';
-  
-  // Impor userStore dari store yang digunakan untuk menyimpan data pengguna
   import { userStore } from '../store';
 
-  // Deklarasi variabel untuk menyimpan data yang diinputkan pengguna pada form pendaftaran
   let username = "";
   let fullname = "";
   let email = "";
   let password = "";
-  let gender = ""; // Variabel untuk menyimpan jenis kelamin pengguna
-  let role = ""; // Variabel untuk menyimpan peran pengguna
+  let gender = "";
+  let role = "";
   let familyemail = ""; 
-  let rememberMe = false; // Variabel untuk menyimpan pilihan "ingat saya" pengguna
+  let rememberMe = false;
 
-  // Fungsi yang akan dipanggil ketika pengguna mengklik tombol "Sign up"
   async function handleSignup() {
-    // Membuat objek user yang berisi data yang diinputkan pengguna
     const user = {
       Username: username,
       Fullname: fullname,
       Password: password,
       Gender: gender,
-      Email: email.toLowerCase(), // Konversi email ke huruf kecil
+      Email: email.toLowerCase(),
       Role: role,
       FamilyEmail: familyemail
     };
 
-    // Validasi input, memastikan semua bidang telah diisi
     if (!username || !fullname || !email || !password || !gender || !role || !familyemail) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Validasi panjang username tidak boleh lebih dari 10 karakter
     if (username.length > 10) {
-      alert("Nickname cannot exceed 10 characters");
+      alert("Username cannot exceed 10 characters");
       return;
     }
 
     try {
-      // Mengirimkan permintaan POST ke server untuk membuat pengguna baru
-      const response = await fetch('http://127.0.0.1:8000/users/', {
+      const response = await fetch('http://127.0.0.1:8000/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -51,32 +41,38 @@
         body: JSON.stringify(user)
       });
 
-      // Jika respons dari server sukses (status 200), simpan data pengguna di userStore dan navigasi ke halaman 'home'
       if (response.ok) {
         const result = await response.json();
-        userStore.set(result.user); // Simpan objek user ke userStore
-        localStorage.setItem('isLoggedIn', 'true');
-        goto('home'); // Navigasi ke halaman 'home'
+        userStore.set(result.user);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('UserID', result.user.UserID);
+        goto('home');
       } else {
-        // Jika email sudah digunakan, tampilkan pesan kesalahan
-        alert("Email is already taken");
+        const errorData = await response.json();
+        console.error("Server Response:", errorData); // Log detailed server response
+        if (response.status === 400) {
+          alert(errorData.detail || "Email is already taken");
+        } else if (response.status === 422) {
+          alert("Unprocessable Entity: Please check the input data"); 
+        } else {
+          alert("An error occurred: " + response.statusText);
+        }
       }
     } catch (error) {
-      // Jika terjadi kesalahan saat mengirim permintaan ke server, tampilkan di konsol
       console.error("Error:", error);
+      alert("An unexpected error occurred. Please try again later.");
     }
   }
-</script>
 
+</script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
   .signup-container {
     font-family: 'Inter', sans-serif;
     max-width: 400px;
     align-self: center;
-	  margin: 70px 0px 0px 250px;
+    margin: 70px 0px 0px 250px;
     padding: 4rem;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -101,7 +97,7 @@
   .form-group input[type="text"],
   .form-group input[type="email"],
   .form-group input[type="password"],
-  .form-group select { /* Menambahkan gaya untuk select */
+  .form-group select {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ccc;
@@ -140,11 +136,11 @@
   <div class="signup-header">My Financial Family</div>
   <div class="form-group">
     <label for="name">Username</label>
-    <input type="text" id="username" bind:value={username} maxlength="10"  placeholder="Enter Username (max 10)"/>
+    <input type="text" id="username" bind:value={username} maxlength="10" placeholder="Enter Username (max 10)"/>
   </div>
   <div class="form-group">
     <label for="fullname">Fullname</label>
-    <input type="text" id="fullname" bind:value={fullname}  placeholder="Enter Full Name"/>
+    <input type="text" id="fullname" bind:value={fullname} placeholder="Enter Full Name"/>
   </div>
   <div class="form-group">
     <label for="email">Email Address</label>
@@ -170,7 +166,6 @@
     <label for="role">Role</label>
     <input type="text" id="role" bind:value={role} placeholder="Enter Role" />
   </div>
-
   <button class="btn-signup" on:click={handleSignup}>Sign up</button>
   <div class="already-account">
     <span>Already have an account? </span><a href="/login">Sign in here</a>

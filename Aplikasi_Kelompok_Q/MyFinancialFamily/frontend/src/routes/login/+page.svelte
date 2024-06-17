@@ -33,9 +33,9 @@
         const result = await response.json(); // Mendapatkan data JSON dari respons
   
         console.log("Login successful", result); // Pesan log untuk berhasil login
-        getUserID = result.user;
-        localStorage.setItem('isLoggedIn', 'true'); // Menyimpan status login di localStorage
-        localStorage.setItem('UserID', getUserID.UserID); // Menyimpan status login di localStorage
+        // getUserID = result.user;
+        sessionStorage.setItem('isLoggedIn', 'true'); // Menyimpan status login di sessionStorage
+        sessionStorage.setItem('UserID', result.user.UserID); // Menyimpan status login di sessionStorage
   
         // Menyimpan data pengguna ke store (misalnya userStore)
         // userStore.set(result.user); // Disesuaikan dengan struktur respons dari server
