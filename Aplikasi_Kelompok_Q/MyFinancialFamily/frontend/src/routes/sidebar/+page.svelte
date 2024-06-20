@@ -120,7 +120,7 @@
   <div class="profile">
     <img src={"https://i.pinimg.com/474x/a3/f4/bc/a3f4bc0dc7d1b030b782c62d7a4781cf.jpg"} alt="Profile Picture" /> <!-- Ganti dengan sumber gambar profil dari data pengguna -->
     <div>
-      <div>{user.Fullname}</div> <!-- Tampilkan nama lengkap pengguna -->
+      <div>{user.Username}</div> 
       <a href="profile-user">View profile</a>
     </div>
   </div>
