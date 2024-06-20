@@ -1,5 +1,4 @@
 <script>
-	import Header from './Header.svelte';
 	import './styles.css';
 	import 'bootstrap/dist/css/bootstrap.min.css';
 	
@@ -57,11 +56,11 @@
 </div>
 
 <style>
-	.app {
+	/* .app {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-	}
+	} */
 /* 
 	main {
 		flex: 1;
@@ -73,7 +72,7 @@
 		box-sizing: border-box;
 	} */
 
-	footer {
+	/* footer {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -90,4 +89,4 @@
 			padding: 0px 0;
 		}
 	}
-</style>
+</style> */
