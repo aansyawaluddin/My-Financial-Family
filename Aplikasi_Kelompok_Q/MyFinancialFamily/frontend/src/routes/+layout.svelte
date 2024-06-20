@@ -1,7 +1,8 @@
 <script>
 	import Header from './Header.svelte';
 	import './styles.css';
-
+	import 'bootstrap/dist/css/bootstrap.min.css';
+	
 	//gunanya ini kode agar ketika meng akses"http://sessionhost:5173/" akan langsung terarahkan ke "http://sessionhost:5173//login"
 	import { onMount } from 'svelte';
   	import { goto } from '$app/navigation';
@@ -61,7 +62,7 @@
 		flex-direction: column;
 		min-height: 100vh;
 	}
-
+/* 
 	main {
 		flex: 1;
 		display: flex;
@@ -70,7 +71,7 @@
 		max-width: 64rem;
 		margin: 0;
 		box-sizing: border-box;
-	}
+	} */
 
 	footer {
 		display: flex;
