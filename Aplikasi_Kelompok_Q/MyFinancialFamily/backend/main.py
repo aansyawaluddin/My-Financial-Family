@@ -34,7 +34,6 @@ class User(BaseModel):
     Gender: str
     Email: str
     Role: str
-    FamilyEmail: str
 
 # Pydantic model untuk entitas Kategori Pengeluaran
 class ExpenseCategory(BaseModel):
@@ -113,8 +112,8 @@ async def create_user(user: User):
         
     
     # Query SQL untuk menyimpan data pengguna
-    sql = "INSERT INTO Users (Username, Fullname, Email, Password, Gender, FamilyEmail, Role ) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    val = (user.Username, user.Fullname, user.Email, hashed_password, user.Gender, user.FamilyEmail, user.Role)
+    sql = "INSERT INTO Users (Username, Fullname, Email, Password, Gender, Role) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (user.Username, user.Fullname, user.Email, hashed_password, user.Gender, user.Role)
 
     
     # Eksekusi query
@@ -134,16 +133,11 @@ async def create_user(user: User):
                 "Gender": user.Gender,
                 "Email": user.Email,
                 "Role": user.Role,
-                "FamilyEmail": user.FamilyEmail
             }}
 #membava semua data user selain admin
 @app.get("/users/read-all-users")
 async def read_all_user():
-    mycursor.execute(
-        "SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail "
-        "FROM Users "
-        "WHERE is_admin = 0"
-    )
+    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, is_admin FROM Users")
     result = mycursor.fetchall()
     if result:
         users = [
@@ -155,7 +149,7 @@ async def read_all_user():
                 "Gender": row[4],
                 "Email": row[5],
                 "Role": row[6],
-                "FamilyEmail": row[7]
+                "is_admin": row[7],
             }
             for row in result
         ]
@@ -167,10 +161,10 @@ async def read_all_user():
 ## read by id    
 @app.get("/users/{UserID}")
 async def read_user(UserID: int = Path(...)):
-    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail, is_admin  FROM Users WHERE UserID = %s", (UserID,))
+    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, is_admin  FROM Users WHERE UserID = %s", (UserID,))
     result = mycursor.fetchone()
     if result:
-        userid, username, fullname, password, gender, email, role, familyemail, is_admin= result
+        userid, username, fullname, password, gender, email, role, is_admin= result
         return {"message": "Read User successful",
                 "user": {
                     "UserID": userid,
@@ -180,21 +174,20 @@ async def read_user(UserID: int = Path(...)):
                     "Gender": gender,
                     "Email": email,
                     "Role": role,
-                    "FamilyEmail": familyemail,
                     "is_admin": is_admin
                 }}
     else:
         raise HTTPException(status_code=404, detail="User not found")
 #read by familyemail
-@app.get("/users/")
-async def read_all_user(family_email: str = Query(...)):
-    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail, is_admin FROM Users WHERE FamilyEmail = %s", (family_email,))
-    result = mycursor.fetchall()
-    if result:
-        users = [{"UserID": row[0], "Username": row[1], "Fullname": row[2], "Password": row[3], "Gender": row[4], "Email": row[5], "Role": row[6], "FamilyEmail": row[7], "is_admin":row[8]} for row in result]
-        return {"users": users}
-    else:
-        raise HTTPException(status_code=404, detail="No users found")
+# @app.get("/users/")
+# async def read_all_user(family_email: str = Query(...)):
+#     mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail, is_admin FROM Users WHERE FamilyEmail = %s", (family_email,))
+#     result = mycursor.fetchall()
+#     if result:
+#         users = [{"UserID": row[0], "Username": row[1], "Fullname": row[2], "Password": row[3], "Gender": row[4], "Email": row[5], "Role": row[6], "FamilyEmail": row[7], "is_admin":row[8]} for row in result]
+#         return {"users": users}
+#     else:
+#         raise HTTPException(status_code=404, detail="No users found")
 
 @app.put("/users/{UserID}")
 async def update_user(UserID: int, user: User):
@@ -211,8 +204,8 @@ async def update_user(UserID: int, user: User):
         hashed_password = current_password
 
     # Update user data in the database
-    sql = "UPDATE Users SET Username = %s, Fullname = %s, Password = %s, Gender = %s, Email = %s, Role = %s, FamilyEmail = %s WHERE UserID = %s"
-    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role, user.FamilyEmail, UserID)
+    sql = "UPDATE Users SET Username = %s, Fullname = %s, Password = %s, Gender = %s, Email = %s, Role = %s WHERE UserID = %s"
+    val = (user.Username, user.Fullname, hashed_password, user.Gender, user.Email, user.Role, UserID)
 
     mycursor.execute(sql, val)
     mydb.commit()
@@ -225,7 +218,6 @@ async def update_user(UserID: int, user: User):
                 "Gender": user.Gender,
                 "Email": user.Email,
                 "Role": user.Role,
-                "FamilyEmail": user.FamilyEmail
             }}
 
 

@@ -8,7 +8,6 @@
   let password = "";
   let gender = "";
   let role = "";
-  let familyemail = ""; 
   let rememberMe = false;
 
   async function handleSignup() {
@@ -19,10 +18,9 @@
       Gender: gender,
       Email: email.toLowerCase(),
       Role: role,
-      FamilyEmail: familyemail
     };
 
-    if (!username || !fullname || !email || !password || !gender || !role || !familyemail) {
+    if (!username || !fullname || !email || !password || !gender || !role ) {
       alert("Please fill in all fields");
       return;
     }
@@ -159,15 +157,17 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="familyemail">Family Email</label>
-    <input type="text" id="familyemail" bind:value={familyemail} placeholder="Enter Family Email" />
-  </div>
-  <div class="form-group">
     <label for="role">Role</label>
-    <input type="text" id="role" bind:value={role} placeholder="Enter Role" />
+    <select id="role" bind:value={role}>
+      <option value="">Select Role</option>
+      <option value="Mother">Mother</option>
+      <option value="Son">Son</option>
+      <option value="Daughter">Daughter</option>
+    </select>
   </div>
   <button class="btn-signup" on:click={handleSignup}>Sign up</button>
   <div class="already-account">
     <span>Already have an account? </span><a href="/login">Sign in here</a>
   </div>
 </div>
+

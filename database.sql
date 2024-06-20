@@ -4,16 +4,14 @@ USE MyFinancialFamily;
 
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(255) DEFAULT NULL,
+    Username VARCHAR(255) NOT NULL NULL,
     Fullname VARCHAR(255) DEFAULT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
     Gender ENUM('male', 'female') DEFAULT NULL,
-    FamilyEmail VARCHAR(255) DEFAULT NULL,
-    Role VARCHAR(255) DEFAULT NULL,
-    is_admin BOOLEAN NOT NULL DEFAULT 0,
-    CHECK ((is_admin = 1 AND Username = 'admin' AND Fullname IS NULL AND Gender IS NULL AND FamilyEmail IS NULL AND Role IS NULL) OR
-           (is_admin = 0 AND Username IS NOT NULL AND Fullname IS NOT NULL AND Gender IS NOT NULL AND FamilyEmail IS NOT NULL))
+	 Role VARCHAR(255) DEFAULT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT 0
+    
 );
 
 CREATE TABLE ExpensesCategory (
@@ -46,10 +44,6 @@ CREATE TABLE DetailPayments (
     FOREIGN KEY (TransactionID) REFERENCES Transactions(TransactionID),
     FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(MethodID)
 );
-
-
--- Tambahkan akun admin
-INSERT INTO Users (Username, Email, Password, is_admin) VALUES ('admin','admin@gmail.com', '123', 1);
 
 
 

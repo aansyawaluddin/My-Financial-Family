@@ -113,6 +113,7 @@
   <div class="menu">
     <a href="home" class="{active === 'home' ? 'active' : ''}">Home</a>
     <a href="expenses" class="{active === 'expenses' ? 'active' : ''}">Expenses</a>
+    <a href="payment-method" class="{active === 'payment-method' ? 'active' : ''}">Payment Method</a>
     <a href="transaction" class="{active === 'transaction' ? 'active' : ''}">Transactions</a>
     <a href="detail-payment" class="{active === 'detail-payment' ? 'active' : ''}">Detail Payment</a>
     <a href="family" class="{active === 'family' ? 'active' : ''}">Family</a>

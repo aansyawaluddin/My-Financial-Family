@@ -1,30 +1,30 @@
 <script>
   // @ts-nocheck
-
+  
   import Sidebar from '../sidebar/+page.svelte';
   import { userStore } from '../store';
-
+  
   let user = {};
   let updatedUser = {};
   let showUpdatePopup = false;
   let isPasswordChanged = false;  // New flag to track password changes
-
+  
   // Subscribe to the store to get user data
   userStore.subscribe(value => {
     user = value || {};
   });
-
+  
   // Function to toggle the visibility of the update popup
   function toggleUpdatePopup() {
     showUpdatePopup = !showUpdatePopup;
-
+  
     if (showUpdatePopup) {
       // Copy the user data to updatedUser when the popup is shown
       updatedUser = { ...user };
       isPasswordChanged = false;  // Reset flag when opening the popup
     }
   }
-
+  
   // Function to update user data
   async function updateUser() {
     // Create an object with the updated user data
@@ -36,21 +36,20 @@
       Gender: updatedUser.Gender,
       Email: updatedUser.Email.toLowerCase(), // Convert email to lowercase
       Role: updatedUser.Role,
-      FamilyEmail: updatedUser.FamilyEmail
     };
-
+  
     // Validate input, ensure all fields are filled
-    if (!updatedUser.Username || !updatedUser.Fullname || !updatedUser.Email || !updatedUser.Password || !updatedUser.Gender || !updatedUser.Role || !updatedUser.FamilyEmail) {
+    if (!updatedUser.Username || !updatedUser.Fullname || !updatedUser.Email || !updatedUser.Password || !updatedUser.Gender || !updatedUser.Role ) {
       alert("Please fill in all fields");
       return;
     }
-
+  
     // Validate that the username is not longer than 10 characters
     if (updatedUser.Username.length > 10) {
       alert("Nickname cannot exceed 10 characters");
       return;
     }
-
+  
     try {
       // Send a PUT request to update user data on the server
       const response = await fetch(`http://127.0.0.1:8000/users/${user.UserID}`, {
@@ -60,24 +59,23 @@
         },
         body: JSON.stringify(inputanForm)
       });
-
+  
       if (response.ok) {
         const result = await response.json();
         userStore.set(result.user); // Update the user store with new data
         alert("Update User Success!");
-
+  
       } else {
         alert("Failed to Update");
       }
     } catch (error) {
       console.error("Error:", error);
     }
-
+  
     // Close the update popup after the update is done
     showUpdatePopup = false;
   }
 </script>
-
 
 <style>
   .page-profile {
@@ -212,12 +210,16 @@
   <Sidebar active="page-profile" />
   <div class="content">
     <div class="profile-card">
-      <h2>Welcome, {user.Fullname}!</h2>
+      {#if user.is_admin === 1}
+        <h2>Profile Information (Admin)</h2>
+      {:else}
+        <h2>Profile Information</h2>
+      {/if}
       <p><strong>User ID:</strong> {user.UserID}</p>
       <p><strong>Username:</strong> {user.Username}</p>
+      <p><strong>Fullname:</strong> {user.Fullname}</p>
       <p><strong>Email:</strong> {user.Email}</p>
       <p><strong>Gender:</strong> {user.Gender}</p>
-      <p><strong>Family Email:</strong> {user.FamilyEmail}</p>
       <p><strong>Role:</strong> {user.Role}</p>
       <button class="btn-update" on:click={toggleUpdatePopup}>Update Profile</button>
     </div>
@@ -248,10 +250,6 @@
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
-        </div>
-        <div>
-          <label for="familyemail">Family Email</label>
-          <input type="text" id="familyemail" placeholder="Enter family email" bind:value={updatedUser.FamilyEmail} />
         </div>
         <div>
           <label for="role">Role</label>
