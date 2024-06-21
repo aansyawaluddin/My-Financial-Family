@@ -53,11 +53,11 @@
 
 <style>
   .sidebar {
-    width: 150px;
-    height: 92.3vh;
+    width: 180px;
+    height: 100vh;
     background-color: #111827;
     color: white;
-    padding: 1.5rem;
+    padding: 1rem;
   }
   .logo {
     font-size: 1.5rem;
@@ -66,7 +66,7 @@
     color: #3B82F6;
   }
   .menu {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     flex: 1;
   }
   .menu a {
@@ -75,7 +75,7 @@
     color: white;
     text-decoration: none;
     border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem;
   }
   .menu a.active,
   .menu a:hover {
@@ -97,14 +97,18 @@
   }
   .logout {
     display: block;
-    padding: 0.75rem 1rem;
-    margin-top: 1rem;
+    padding: 0.75rem 2.9rem;
+    margin-top: 1.8rem;
     background-color: #6B7280;
     color: white;
     text-decoration: none;
     cursor: pointer;
     text-align: center;
     border-radius: 0.5rem;
+  }
+  .logout:hover{
+    
+    background-color: #454647;
   }
 </style>
 
