@@ -22,8 +22,8 @@
 
   async function getDataUser() {
     try {
-      const userId = sessionStorage.getItem('UserID');
-      const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+      const getUsername = sessionStorage.getItem('Username');
+      const response = await fetch(`http://127.0.0.1:8000/users/read-username/${getUsername}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -46,7 +46,7 @@
   function logout() {
     sessionStorage.removeItem('isLoggedIn'); // Hapus status login dari sessionStorage
     sessionStorage.removeItem('user'); // Hapus status login dari sessionStorage
-    sessionStorage.removeItem('UserID'); // Hapus status login dari sessionStorage
+    sessionStorage.removeItem('Username'); // Hapus status login dari sessionStorage
     goto('login'); // Redirect pengguna ke halaman login setelah logout
   }
 </script>

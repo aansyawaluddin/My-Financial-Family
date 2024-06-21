@@ -64,16 +64,16 @@ def verify_password(plain_password: str, hashed_password: str):
 
 @app.post("/login/")
 async def login(user: UserLogin):
-    mycursor.execute("SELECT UserID, Password, is_admin FROM Users WHERE Email = %s", (user.Email,))
+    mycursor.execute("SELECT Username, Password, is_admin FROM Users WHERE Email = %s", (user.Email,))
     result = mycursor.fetchone()
     if result:
-        userid, hashed_password, is_admin= result
+        username, hashed_password, is_admin= result
         if is_admin == 0:
             if verify_password(user.Password, hashed_password):
                 return {
                     "message": "Login successful",
                     "user": {
-                        "UserID": userid,
+                        "Username": username,
                     }
                 }
             else:
@@ -82,7 +82,7 @@ async def login(user: UserLogin):
             return {
                     "message": "Login successful",
                     "user": {
-                        "UserID": userid,
+                        "Username": username,
                     }
                 }
     else:
@@ -102,15 +102,19 @@ async def create_user(user: User):
     # Hash password sebelum disimpan
     hashed_password = hash_password_bcrypt(user.Password)
     
+    # Periksa apakah Username sudah ada
+    mycursor.execute("SELECT * FROM Users WHERE Username = %s", (user.Username,))
+    result_username= mycursor.fetchone()
+    
+    if result_username:
+        raise HTTPException(status_code=400, detail="Username Is Already Taken")
     # Periksa apakah email sudah ada
     mycursor.execute("SELECT * FROM Users WHERE Email = %s", (user.Email,))
-    result= mycursor.fetchone()
+    result_email= mycursor.fetchone()
     
-    if result:
+    if result_email:
         raise HTTPException(status_code=400, detail="Email Is Already Taken")
-    
-        
-    
+
     # Query SQL untuk menyimpan data pengguna
     sql = "INSERT INTO Users (Username, Fullname, Email, Password, Gender, Role) VALUES (%s, %s, %s, %s, %s, %s)"
     val = (user.Username, user.Fullname, user.Email, hashed_password, user.Gender, user.Role)
@@ -119,21 +123,8 @@ async def create_user(user: User):
     # Eksekusi query
     mycursor.execute(sql, val)
     mydb.commit()
-    ## Setelah user dimasukan ke databse,selanjutnya ambil userid utnuk mengambil data usernya lalu ditampilkan di web
-    mycursor.execute("SELECT UserID FROM Users WHERE Email = %s", (user.Email,))
-    result= mycursor.fetchone()
-    
-    if result:
-        userid = result
-    return {"message": "User created successfully","user": {
-                "UserID": userid,
-                "Username": user.Username,
-                "Fullname": user.Fullname,
-                "Password":user.Password,
-                "Gender": user.Gender,
-                "Email": user.Email,
-                "Role": user.Role,
-            }}
+
+    return {"message": "User created successfully"}
 #membava semua data user selain admin
 @app.get("/users/read-all-users")
 async def read_all_user():
@@ -159,9 +150,29 @@ async def read_all_user():
 
 
 ## read by id    
-@app.get("/users/{UserID}")
-async def read_user(UserID: int = Path(...)):
+@app.get("/users/read-id/{UserID}")
+async def read_id_user(UserID: int = Path(...)):
     mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, is_admin  FROM Users WHERE UserID = %s", (UserID,))
+    result = mycursor.fetchone()
+    if result:
+        userid, username, fullname, password, gender, email, role, is_admin= result
+        return {"message": "Read User successful",
+                "user": {
+                    "UserID": userid,
+                    "Username": username,
+                    "Fullname": fullname,
+                    "Password":password,
+                    "Gender": gender,
+                    "Email": email,
+                    "Role": role,
+                    "is_admin": is_admin
+                }}
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+## read by username   
+@app.get("/users/read-username/{Username}")
+async def read_username_user(Username: str = Path(...)):
+    mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, is_admin  FROM Users WHERE Username = %s", (Username,))
     result = mycursor.fetchone()
     if result:
         userid, username, fullname, password, gender, email, role, is_admin= result
@@ -268,6 +279,22 @@ async def create_payment_method(method: PaymentMethod):
     mydb.commit()
     return {"message": "Payment method created successfully"}
 
+@app.get("/payment_methods/read-all-methods")
+async def read_all_method():
+    mycursor.execute("SELECT MethodID, MethodName FROM PaymentMethods")
+    result = mycursor.fetchall()
+    if result:
+        methods = [
+            {
+                "MethodID": row[0],
+                "MethodName": row[1],
+            }
+            for row in result
+        ]
+        return {"methods": methods}
+        
+    else:
+        raise HTTPException(status_code=404, detail="Payment method not found")
 @app.get("/payment_methods/{MethodID}")
 async def read_payment_method(MethodID: int = Path(..., description="Input ID")):
     mycursor.execute("SELECT * FROM PaymentMethods WHERE MethodID = %s", (MethodID,))

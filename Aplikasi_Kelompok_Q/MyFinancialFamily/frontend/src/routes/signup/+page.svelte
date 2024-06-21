@@ -43,7 +43,7 @@
         const result = await response.json();
         userStore.set(result.user);
         sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('UserID', result.user.UserID);
+        sessionStorage.setItem('Username', username);
         goto('home');
       } else {
         const errorData = await response.json();

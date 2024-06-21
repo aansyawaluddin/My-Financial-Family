@@ -2,7 +2,6 @@
   // @ts-nocheck // Mengabaikan pengecekan tipe TypeScript untuk file ini
 
   import { goto } from '$app/navigation'; // Mengimpor fungsi goto dari modul navigasi Svelte
-  import { userStore } from '../store'; // Mengimpor store user dari lokasi yang sesuai
 
   let email = ""; // Variabel untuk menyimpan nilai input email dari pengguna
   let password = ""; // Variabel untuk menyimpan nilai input password dari pengguna
@@ -35,7 +34,7 @@
         console.log("Login successful", result); // Pesan log untuk berhasil login
         // getUserID = result.user;
         sessionStorage.setItem('isLoggedIn', 'true'); // Menyimpan status login di sessionStorage
-        sessionStorage.setItem('UserID', result.user.UserID); // Menyimpan status login di sessionStorage
+        sessionStorage.setItem('Username', result.user.Username); // Menyimpan status login di sessionStorage
 
         // Menyimpan data pengguna ke store (misalnya userStore)
         // userStore.set(result.user); // Disesuaikan dengan struktur respons dari server

@@ -11,7 +11,7 @@
 
   // Subscribe to the store to get user data
   userStore.subscribe(value => {
-    user = value || {};
+    user = value 
 });
 </script>
 

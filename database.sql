@@ -43,7 +43,7 @@ CREATE TABLE DetailPayments (
     PaymentDate DATE NOT NULL,
     FOREIGN KEY (TransactionID) REFERENCES Transactions(TransactionID),
     FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(MethodID)
-);
+);	
 
 
 
