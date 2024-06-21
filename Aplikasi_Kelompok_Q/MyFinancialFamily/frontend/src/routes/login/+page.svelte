@@ -6,7 +6,6 @@
   let email = ""; // Variabel untuk menyimpan nilai input email dari pengguna
   let password = ""; // Variabel untuk menyimpan nilai input password dari pengguna
   let rememberMe = false; // Variabel boolean untuk mengontrol opsi "Keep me signed in"
-  // let user = {}; // Variabel untuk menyimpan data pengguna setelah login
 
 
   /**

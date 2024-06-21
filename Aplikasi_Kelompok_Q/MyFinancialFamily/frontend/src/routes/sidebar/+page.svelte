@@ -107,8 +107,7 @@
     border-radius: 0.5rem;
   }
   .logout:hover{
-    
-    background-color: #454647;
+    background-color: #2563eb;
   }
 </style>
 

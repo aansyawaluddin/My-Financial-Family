@@ -8,7 +8,7 @@
 
   // Subscribe untuk mengambil data pengguna dari userStore
   userStore.subscribe(value => {
-    user = value ;
+    user = value || {};
   });
 
   // State variables
