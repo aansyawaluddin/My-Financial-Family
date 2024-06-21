@@ -70,8 +70,8 @@
     font-family: 'Inter', sans-serif;
     max-width: 400px;
     align-self: center;
-    margin: 70px 0px 0px 250px;
-    padding: 4rem;
+    margin: 20px 0px 30px 450px;
+    padding: 2rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #fff;

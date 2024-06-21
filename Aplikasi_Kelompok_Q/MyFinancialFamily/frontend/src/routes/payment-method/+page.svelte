@@ -15,7 +15,7 @@
   let showModal = false;
   let showUpdateModal = false;
   let showDeleteModal = false;
-  let paymentCategory = '';
+  let paymentMethodName = '';
   let paymentMethods = [];
   let selectedMethod = null; // To store the selected method for updating or deleting
 
@@ -27,7 +27,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ MethodName: paymentCategory })
+        body: JSON.stringify({ MethodName: paymentMethodName })
       });
 
       if (response.ok) {
@@ -55,7 +55,7 @@
         const result = await response.json();
         paymentMethods = result.methods;
       } else {
-        console.error('Failed to fetch payment methods');
+        paymentMethods = []
       }
     } catch (error) {
       console.error('Error:', error);
@@ -113,7 +113,7 @@
   // Function to close modal
   function closeModal() {
     showModal = false;
-    paymentCategory = ''; // Reset paymentCategory when modal is closed
+    paymentMethodName = ''; // Reset paymentMethodName when modal is closed
   }
 
   // Function to open update modal
@@ -292,7 +292,7 @@
         <button on:click={closeModal}>Close</button>
       </div>
       <div class="modal-body">
-        <input type="text" placeholder="Payment Category Name" bind:value={paymentCategory} />
+        <input type="text" placeholder="Payment Category Name" bind:value={paymentMethodName} />
       </div>
       <div class="modal-footer">
         <button on:click={addPaymentMethod}>Save</button>

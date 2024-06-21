@@ -247,9 +247,26 @@ async def create_category(category: ExpenseCategory):
     mydb.commit()
     return {"message": "Category created successfully"}
 
+@app.get("/categories/read-all-categories")
+async def read_all_categories():
+    mycursor.execute("SELECT CategoryID, CategoryName FROM ExpensesCategory")
+    result = mycursor.fetchall()
+    if result:
+        categories = [
+            {
+                "CategoryID": row[0],
+                "CategoryName": row[1],
+            }
+            for row in result
+        ]
+        return {"categories": categories}
+        
+    else:
+        raise HTTPException(status_code=404, detail="Payment method not found")
+
 @app.get("/categories/{CategoryID}")
-async def read_category(CategoryID: int = Path(..., description="Input ID")):
-    mycursor.execute("SELECT * FROM ExpensesCategory WHERE CategoryID = %s", (CategoryID,))
+async def read_category(CategoryID: int = Path(...)):
+    mycursor.execute("SELECT CategoryID, CategoryName FROM ExpensesCategory WHERE CategoryID = %s", (CategoryID,))
     result = mycursor.fetchone()
     if result:
         return {"CategoryID": result[0], "CategoryName": result[1]}
