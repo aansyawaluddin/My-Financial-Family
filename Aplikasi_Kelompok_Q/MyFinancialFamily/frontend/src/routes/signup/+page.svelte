@@ -21,12 +21,12 @@
     };
 
     if (!username || !fullname || !email || !password || !gender || !role ) {
-      alert("Please fill in all fields");
+      alert("Silakan isi semua bidang");
       return;
     }
 
     if (username.length > 10) {
-      alert("Username cannot exceed 10 characters");
+      alert("Username tidak boleh melebihi 10 karakter");
       return;
     }
 
@@ -49,125 +49,68 @@
         const errorData = await response.json();
         console.error("Server Response:", errorData); // Log detailed server response
         if (response.status === 400) {
-          alert(errorData.detail || "Email is already taken");
+          alert(errorData.detail || "Email sudah digunakan");
         } else if (response.status === 422) {
-          alert("Unprocessable Entity: Please check the input data"); 
+          alert("Data tidak dapat diproses: Silakan periksa data input"); 
         } else {
-          alert("An error occurred: " + response.statusText);
+          alert("Terjadi kesalahan: " + response.statusText);
         }
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An unexpected error occurred. Please try again later.");
+      alert("Terjadi kesalahan tak terduga. Silakan coba lagi nanti.");
     }
   }
 
 </script>
 
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-  .signup-container {
-    font-family: 'Inter', sans-serif;
-    max-width: 400px;
-    align-self: center;
-    margin: 20px 0px 30px 450px;
-    padding: 2rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  .signup-header {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: #3B82F6;
-  }
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-  .form-group input[type="text"],
-  .form-group input[type="email"],
-  .form-group input[type="password"],
-  .form-group select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: 'Inter', sans-serif;
-  }
-  .btn-signup {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #3B82F6;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  .btn-signup:hover {
-    background-color: #2563EB;
-  }
-  .already-account {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.875rem;
-  }
-  .already-account a {
-    color: #3B82F6;
-    text-decoration: none;
-  }
-  .already-account a:hover {
-    text-decoration: underline;
-  }
-</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="signup-container">
-  <div class="signup-header">My Financial Family</div>
-  <div class="form-group">
-    <label for="name">Username</label>
-    <input type="text" id="username" bind:value={username} maxlength="10" placeholder="Enter Username (max 10)"/>
-  </div>
-  <div class="form-group">
-    <label for="fullname">Fullname</label>
-    <input type="text" id="fullname" bind:value={fullname} placeholder="Enter Full Name"/>
-  </div>
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input type="email" id="email" bind:value={email} placeholder="Enter Email"/>
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" id="password" bind:value={password} placeholder="Enter Password"/>
-  </div>
-  <div class="form-group">
-    <label for="gender">Gender</label>
-    <select id="gender" bind:value={gender}>
-      <option value="">Select Gender</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="role">Role</label>
-    <select id="role" bind:value={role}>
-      <option value="">Select Role</option>
-      <option value="Mother">Mother</option>
-      <option value="Son">Son</option>
-      <option value="Daughter">Daughter</option>
-    </select>
-  </div>
-  <button class="btn-signup" on:click={handleSignup}>Sign up</button>
-  <div class="already-account">
-    <span>Already have an account? </span><a href="/login">Sign in here</a>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-4">My Financial Family</h5>
+          <div class="form-group mb-3">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" bind:value={username} maxlength="10" placeholder="Masukkan Username (maks 10)"/>
+          </div>
+          <div class="form-group mb-3">
+            <label for="fullname">Nama Lengkap</label>
+            <input type="text" class="form-control" id="fullname" bind:value={fullname} placeholder="Masukkan Nama Lengkap"/>
+          </div>
+          <div class="form-group mb-3">
+            <label for="email">Alamat Email</label>
+            <input type="email" class="form-control" id="email" bind:value={email} placeholder="Masukkan Email"/>
+          </div>
+          <div class="form-group mb-3">
+            <label for="password">Kata Sandi</label>
+            <input type="password" class="form-control" id="password" bind:value={password} placeholder="Masukkan Kata Sandi"/>
+          </div>
+          <div class="form-group mb-3">
+            <label for="gender">Jenis Kelamin</label>
+            <select class="form-select" id="gender" bind:value={gender}>
+              <option value="">Pilih Jenis Kelamin</option>
+              <option value="male">Laki-laki</option>
+              <option value="female">Perempuan</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label for="role">Peran</label>
+            <select class="form-select" id="role" bind:value={role}>
+              <option value="">Pilih Peran</option>
+              <option value="Mother">Ibu</option>
+              <option value="Son">Anak Laki-laki</option>
+              <option value="Daughter">Anak Perempuan</option>
+            </select>
+          </div>
+          <button class="btn btn-primary w-100" on:click={handleSignup}>Daftar</button>
+          <div class="text-center mt-3">
+            <span>Sudah punya akun? </span><a href="/login">Masuk di sini</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
