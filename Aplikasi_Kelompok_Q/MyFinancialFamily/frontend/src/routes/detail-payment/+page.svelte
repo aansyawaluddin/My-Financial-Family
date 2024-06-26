@@ -18,7 +18,7 @@
 </style>
 
 <div class="detail_payment">
-  <Sidebar active="detail_payment" />
+  <Sidebar active="detail-payment" />
   <div class="content">
     <h1>Welcome to the Detail Payment</h1>
     <!-- Add more content here -->

@@ -337,23 +337,7 @@ async def create_transaction(transaction: Transaction):
     mydb.commit()
     return {"message": "Transaction created successfully"}
 
-@app.get("/transactions/{TransactionID}")
-async def read_transaction(TransactionID: int = Path(..., description="Input ID")):
-    mycursor.execute("SELECT * FROM Transactions WHERE TransactionID = %s", (TransactionID,))
-    result = mycursor.fetchone()
-    if result:
-        return {
-            "TransactionID": result[0],
-            "UserID": result[1],
-            "ExpensesCategoryID": result[2],
-            "Amount": result[3],
-            "TransactionDate": result[4],
-            "Description": result[5]
-        }
-    else:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-
-@app.get("/transactions/read-all-transactions", response_model=List[Transaction])
+@app.get("/transactions/read-all-transactions")
 async def read_all_transactions():
     mycursor.execute("SELECT TransactionID, UserID, ExpensesCategoryID, Amount, TransactionDate, Description FROM Transactions")
     result = mycursor.fetchall()
@@ -369,9 +353,25 @@ async def read_all_transactions():
             }
             for row in result
         ]
-        return transactions
+        return {"transactions": transactions}
     else:
         raise HTTPException(status_code=404, detail="No transactions found")
+
+@app.get("/transactions/{TransactionID}")
+async def read_transaction(TransactionID: int = Path(..., description="Input ID")):
+    mycursor.execute("SELECT * FROM Transactions WHERE TransactionID = %s", (TransactionID,))
+    result = mycursor.fetchone()
+    if result:
+        return {
+            "TransactionID": result[0],
+            "UserID": result[1],
+            "ExpensesCategoryID": result[2],
+            "Amount": result[3],
+            "TransactionDate": result[4],
+            "Description": result[5]
+        }
+    else:
+        raise HTTPException(status_code=404, detail="Transaction not found")
 
 @app.put("/transactions/{TransactionID}")
 async def update_transaction(TransactionID: int, transaction: Transaction):

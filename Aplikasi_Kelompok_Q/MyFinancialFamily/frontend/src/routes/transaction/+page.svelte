@@ -1,17 +1,70 @@
 <script>
+  // @ts-nocheck
+  import { onMount } from 'svelte';
   import Sidebar from '../sidebar/+page.svelte';
+  import { userStore } from '../store';
 
   export const active = 'transaction';
 
-  let transactions = [
-    { description: "Spotify Subscription", transactionId: "#12548796", type: "Shopping", card: "1234 ****", date: "28 Jan, 12.30 AM", amount: "$2,500" },
-    { description: "Freepik Sales", transactionId: "#12548796", type: "Transfer", card: "1234 ****", date: "25 Jan, 10.40 PM", amount: "$750" },
-    { description: "Mobile Service", transactionId: "#12548796", type: "Service", card: "1234 ****", date: "20 Jan, 10.40 PM", amount: "$150" },
-    { description: "Wilson", transactionId: "#12548796", type: "Transfer", card: "1234 ****", date: "15 Jan, 03.29 PM", amount: "$1050" },
-    { description: "Emilly", transactionId: "#12548796", type: "Transfer", card: "1234 ****", date: "14 Jan, 10.40 PM", amount: "$840" },
-  ];
-
+  let user = {};
+  let transactions = [];
   let showModal = false;
+  let categories = [];
+
+  // Form inputs
+  let expensescategoryid= 0;
+  let amount;
+  let transactiondate = '';
+  let description = '';
+
+  // Subscribe untuk mengambil data pengguna dari userStore
+  userStore.subscribe(value => {
+    user = value || {};
+  });
+
+  async function fetchCategories() {
+    try {
+      const response = await fetch('http://localhost:8000/categories/read-all-categories', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        categories = result.categories;
+      } else {
+        categories = []
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  async function readTransactions() {
+    try {
+      const response = await fetch('http://localhost:8000/transactions/read-all-transactions', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        transactions = result.transactions;
+      } else {
+        transactions = []
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  onMount(() => {
+    readTransactions();
+    fetchCategories();
+  });
 
   function openModal() {
     showModal = true;
@@ -19,6 +72,44 @@
 
   function closeModal() {
     showModal = false;
+  }
+
+  async function addTransaction() {
+    const newTransaction = {
+      UserID: user.UserID,
+      ExpensesCategoryID: expensescategoryid,
+      Amount: amount,
+      TransactionDate: transactiondate,
+      Description	: description
+    };
+    if (!expensescategoryid || !amount || !transactiondate || !description ) {
+      alert("Silakan isi semua bidang");
+      return;
+    }
+    if (amount < 1000) {
+      alert("nominal sangat kecil (minimal 1000 perak)");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/transactions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newTransaction)
+      });
+
+      if (response.ok) {
+        // If transaction addd successfully, close the modal and refresh transactions
+        closeModal();
+        readTransactions();
+      } else {
+        console.error('Failed to add transaction');
+      }
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+    }
   }
 </script>
 
@@ -136,7 +227,7 @@
     padding: 0.5rem;
     box-sizing: border-box;
   }
-  .save-btn {
+  .add-btn {
     display: block;
     width: 100%;
     padding: 0.75rem;
@@ -156,8 +247,7 @@
   <div class="content">
     <div class="header">
       <div>
-        <h1>Hello mr.haikal</h1>
-        <p>May 19, 2024</p>
+        <h1>Hello {categories.CategoryID}</h1>
       </div>
     </div>
 
@@ -173,24 +263,24 @@
     <table>
       <thead>
         <tr>
-          <th>Description</th>
-          <th>Transaction ID</th>
-          <th>Type</th>
-          <th>Card</th>
-          <th>Date</th>
+          <th>TransactionID</th>
+          <th>UserID</th>
+          <th>ExpensesCategoryID</th>
           <th>Amount</th>
+          <th>TransactionDate</th>
+          <th>Description</th>
           <th>Receipt</th>
         </tr>
       </thead>
       <tbody>
         {#each transactions as transaction}
           <tr>
-            <td>{transaction.description}</td>
-            <td>{transaction.transactionId}</td>
-            <td>{transaction.type}</td>
-            <td>{transaction.card}</td>
-            <td>{transaction.date}</td>
-            <td>{transaction.amount}</td>
+            <td>{transaction.TransactionID}</td>
+            <td>{transaction.UserID}</td>
+            <td>{transaction.ExpensesCategoryID}</td>
+            <td>{transaction.Amount}</td>
+            <td>{transaction.TransactionDate}</td>
+            <td>{transaction.Description}</td>
             <td><button class="download-btn">Download</button></td>
           </tr>
         {/each}
@@ -202,36 +292,27 @@
     <div class="modal-content">
       <span class="close" on:click={closeModal}>&times;</span>
       <div class="form-group">
-        <label for="user">User</label>
-        <select id="user">
-          <option>Select a user</option>
-        </select>
-      </div>
-      <div class="form-group">
         <label for="category">Category</label>
-        <select id="category">
-          <option>Select a category</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="payment-method">Payment Method</label>
-        <select id="payment-method">
-          <option>Select a method</option>
+        <select id="category" bind:value={expensescategoryid}>
+          <option value="">Select a category</option>
+          {#each categories as category}
+            <option value={category.CategoryID}>{category.CategoryName}</option>
+          {/each}
         </select>
       </div>
       <div class="form-group">
         <label for="amount">Amount</label>
-        <input type="text" id="amount" placeholder="Input Here">
+        <input type="text" id="amount" placeholder="Input Here" bind:value={amount}>
       </div>
       <div class="form-group">
         <label for="transaction-date">Transaction Date</label>
-        <input type="text" id="transaction-date" placeholder="YYYY/MM/DD">
+        <input type="date" id="transaction-date" bind:value={transactiondate}>
       </div>
       <div class="form-group">
         <label for="description">Description</label>
-        <input type="text" id="description" placeholder="Input Here">
+        <input type="text" id="description" placeholder="Input Here" bind:value={description}>
       </div>
-      <button class="save-btn">Save</button>
+      <button class="add-btn" on:click={addTransaction}>Add Categories</button>
     </div>
   </div>
 </div>
