@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Path, Query
 from pydantic import BaseModel, Field
 import mysql.connector
 import bcrypt
+from typing import List
 app = FastAPI()
 
 # Koneksi ke database
