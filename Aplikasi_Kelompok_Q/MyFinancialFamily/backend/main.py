@@ -69,23 +69,15 @@ async def login(user: UserLogin):
     result = mycursor.fetchone()
     if result:
         username, hashed_password, is_admin= result
-        if is_admin == 0:
-            if verify_password(user.Password, hashed_password):
-                return {
-                    "message": "Login successful",
-                    "user": {
-                        "Username": username,
-                    }
-                }
-            else:
-                raise HTTPException(status_code=400, detail="Incorrect password")
-        else:
+        if verify_password(user.Password, hashed_password):
             return {
-                    "message": "Login successful",
-                    "user": {
-                        "Username": username,
-                    }
+                "message": "Login successful",
+                "user": {
+                    "Username": username,
                 }
+            }
+        else:
+            raise HTTPException(status_code=400, detail="Incorrect password")
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
