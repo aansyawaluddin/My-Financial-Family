@@ -9,7 +9,9 @@
   let user = {};
   let transactions = [];
   let showModal = false;
+  let showUpdateModal = false;
   let categories = [];
+  let selectedTransaction = null;
 
   // Form inputs
   let expensescategoryid= 0;
@@ -41,6 +43,7 @@
       console.error('Error:', error);
     }
   }
+
   async function readTransactions() {
     try {
       const response = await fetch('http://localhost:8000/transactions/read-all-transactions', {
@@ -74,13 +77,27 @@
     showModal = false;
   }
 
+  function openUpdateModal(transaction) {
+    selectedTransaction = transaction;
+    expensescategoryid = transaction.ExpensesCategoryID;
+    amount = transaction.Amount;
+    transactiondate = transaction.TransactionDate;
+    description = transaction.Description;
+    showUpdateModal = true;
+  }
+
+  function closeUpdateModal() {
+    showUpdateModal = false;
+    selectedTransaction = null;
+  }
+
   async function addTransaction() {
     const newTransaction = {
       UserID: user.UserID,
       ExpensesCategoryID: expensescategoryid,
       Amount: amount,
       TransactionDate: transactiondate,
-      Description	: description
+      Description: description
     };
     if (!expensescategoryid || !amount || !transactiondate || !description ) {
       alert("Silakan isi semua bidang");
@@ -111,6 +128,58 @@
       console.error('Error saving transaction:', error);
     }
   }
+
+  async function updateTransaction(transactionID) {
+    if (!selectedTransaction) return;
+
+    const updatedTransaction = {
+      ExpensesCategoryID: expensescategoryid,
+      Amount: amount,
+      TransactionDate: transactiondate,
+      Description: description
+    };
+
+    try {
+      const response = await fetch(`http://localhost:8000/transactions/transactions/${transactionID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedTransaction)
+      });
+
+      if (response.ok) {
+        closeUpdateModal();
+        readTransactions();
+      } else {
+        console.error('Failed to update transaction');
+      }
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+    }
+  }
+
+  async function deleteTransaction(transactionID) {
+    const confirmation = confirm("Are you sure you want to delete this transaction?");
+    if (!confirmation) return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/transactions/${transactionID}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        readTransactions(); // Refresh transactions after deletion
+      } else {
+        console.error('Failed to delete transaction');
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+    }
+  }
 </script>
 
 <style>
@@ -123,7 +192,7 @@
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
-    margin-left: 180px; /* Sesuaikan dengan lebar sidebar */
+    margin-left: 180px; 
   }
   .header {
     display: flex;
@@ -153,11 +222,11 @@
     color: white;
   }
   .buttons .update {
-    background-color: #FBBC05;
-    color: white;
+    background-color: yellow; 
+    color: black; 
   }
   .buttons .delete {
-    background-color: #EA4335;
+    background-color: red; 
     color: white;
   }
   table {
@@ -255,8 +324,6 @@
       <h2>Recent Transactions</h2>
       <div class="buttons">
         <button class="add" on:click={openModal}>ADD</button>
-        <button class="update">UPDATE</button>
-        <button class="delete">DELETE</button>
       </div>
     </div>
 
@@ -270,6 +337,7 @@
           <th>TransactionDate</th>
           <th>Description</th>
           <th>Receipt</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -278,10 +346,14 @@
             <td>{transaction.TransactionID}</td>
             <td>{transaction.UserID}</td>
             <td>{transaction.ExpensesCategoryID}</td>
-            <td>{transaction.Amount}</td>
+                        <td>{transaction.Amount}</td>
             <td>{transaction.TransactionDate}</td>
             <td>{transaction.Description}</td>
             <td><button class="download-btn">Download</button></td>
+            <td>
+              <button class="update" on:click={() => openUpdateModal(transaction)}>UPDATE</button>
+              <button class="delete" on:click={() => deleteTransaction(transaction.TransactionID)}>DELETE</button>
+            </td>
           </tr>
         {/each}
       </tbody>
@@ -315,4 +387,32 @@
       <button class="add-btn" on:click={addTransaction}>Add Categories</button>
     </div>
   </div>
+
+  <div class:modal={true} class:show={showUpdateModal}>
+  <div class="modal-content">
+    <span class="close" on:click={closeUpdateModal}>&times;</span>
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" bind:value={expensescategoryid}>
+        <option value="">Select a category</option>
+        {#each categories as category}
+          <option value={category.CategoryID}>{category.CategoryName}</option>
+        {/each}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="amount">Amount</label>
+      <input type="text" id="amount" placeholder="Input Here" bind:value={amount}>
+    </div>
+    <div class="form-group">
+      <label for="transaction-date">Transaction Date</label>
+      <input type="date" id="transaction-date" bind:value={transactiondate}>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input type="text" id="description" placeholder="Input Here" bind:value={description}>
+    </div>
+    <button class="add-btn" on:click={() => updateTransaction(selectedTransaction.TransactionID)}>Update Transaction</button>
+  </div>
+</div>
 </div>
