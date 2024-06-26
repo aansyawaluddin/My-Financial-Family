@@ -21,6 +21,7 @@
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
+    margin-left: 180px; 
   }
   .header {
     display: flex;
