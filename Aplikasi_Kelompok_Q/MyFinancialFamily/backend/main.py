@@ -360,6 +360,26 @@ async def read_transaction(TransactionID: int = Path(..., description="Input ID"
     else:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
+@app.get("/transactions/read-all-transactions", response_model=List[Transaction])
+async def read_all_transactions():
+    mycursor.execute("SELECT TransactionID, UserID, ExpensesCategoryID, Amount, TransactionDate, Description FROM Transactions")
+    result = mycursor.fetchall()
+    if result:
+        transactions = [
+            {
+                "TransactionID": row[0],
+                "UserID": row[1],
+                "ExpensesCategoryID": row[2],
+                "Amount": row[3],
+                "TransactionDate": row[4],
+                "Description": row[5]
+            }
+            for row in result
+        ]
+        return transactions
+    else:
+        raise HTTPException(status_code=404, detail="No transactions found")
+
 @app.put("/transactions/{TransactionID}")
 async def update_transaction(TransactionID: int, transaction: Transaction):
     sql = "UPDATE Transactions SET UserID = %s, ExpensesCategoryID = %s, Amount = %s, TransactionDate = %s, Description = %s WHERE TransactionID = %s"
