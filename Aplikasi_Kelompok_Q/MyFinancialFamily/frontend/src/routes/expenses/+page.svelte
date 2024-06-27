@@ -16,8 +16,8 @@
   let showUpdateModal = false;
   let showDeleteModal = false;
   let expensesCategory = '';
-  let categories = [];// untuk
-  let selectedCategory = []; // untuk menyimpan data expensescategory yg dipilih
+  let categories = [];
+  let selectedCategory = null; // To store the selected category for updating or deleting
 
   // Function to add a new expenses category
   async function addExpenses() {
@@ -62,7 +62,7 @@
     }
   }
 
-  // Function to update a expenses category
+  // Function to update an expenses category
   async function updateExpenses() {
     try {
       const response = await fetch(`http://localhost:8000/categories/${selectedCategory.CategoryID}`, {
@@ -84,27 +84,26 @@
     }
   }
 
-// Function to delete a expenses category
-async function deleteExpenses() {
-  try {
-    const response = await fetch(`http://localhost:8000/categories/${selectedCategory.CategoryID}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
+  // Function to delete an expenses category
+  async function deleteExpenses() {
+    try {
+      const response = await fetch(`http://localhost:8000/categories/${selectedCategory.CategoryID}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        closeDeleteModal(); // Close modal after successful deletion
+        await fetchExpenses(); // Refresh expenses list
+      } else {
+        console.error('Failed to delete expenses category');
       }
-    });
-
-    if (response.ok) {
-      closeDeleteModal(); // Close modal after successful deletion
-      await fetchExpenses(); // Refresh expenses list
-    } else {
-      console.error('Failed to delete expenses category');
+    } catch (error) {
+      console.error('Error:', error);
     }
-  } catch (error) {
-    console.error('Error:', error);
   }
-}
-
 
   // Function to open modal
   function openModal() {
@@ -118,27 +117,27 @@ async function deleteExpenses() {
   }
 
   // Function to open update modal
-  function openUpdateModal(method) {
-    selectedCategory = { ...method }; // Menampilkan method lama di kolom pengisian
+  function openUpdateModal(category) {
+    selectedCategory = { ...category }; // Menampilkan category lama di kolom pengisian
     showUpdateModal = true;
   }
 
   // Function to close update modal
   function closeUpdateModal() {
     showUpdateModal = false;
-    selectedCategory = null; // Reset selected method
+    selectedCategory = null; // Reset selected category
   }
 
   // Function to open delete modal
-  function openDeleteModal(method) {
-    selectedCategory = { ...method }; // Menyimpan method yang akan dihapus
+  function openDeleteModal(category) {
+    selectedCategory = { ...category }; // Menyimpan category yang akan dihapus
     showDeleteModal = true;
   }
 
   // Function to close delete modal
   function closeDeleteModal() {
     showDeleteModal = false;
-    selectedCategory = null; // Reset selected method
+    selectedCategory = null; // Reset selected category
   }
 
   // Fetch expenses on component mount
@@ -151,10 +150,15 @@ async function deleteExpenses() {
     height: 100vh;
     box-sizing: border-box;
   }
+  .sidebar {
+    position: fixed;
+    z-index: 100;
+  }
   .content {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
+    margin-left: 200px; /* Adjust based on sidebar width */
   }
   .header {
     display: flex;
@@ -173,7 +177,7 @@ async function deleteExpenses() {
   }
   .card {
     display: flex;
-    flex-direction: column; /* Changed to column layout */
+    flex-direction: column;
     align-items: center;
     padding: 1rem;
     background: white;
@@ -259,7 +263,9 @@ async function deleteExpenses() {
 </style>
 
 <div class="expenses">
-  <Sidebar active="expenses" />
+  <div class="sidebar">
+    <Sidebar active="expenses" />
+  </div>
   <div class="content">
     <div class="header">
       <h1>Expenses Category</h1>
@@ -311,7 +317,7 @@ async function deleteExpenses() {
         <button on:click={closeUpdateModal}>Close</button>
       </div>
       <div class="modal-body">
-        <input type="text" placeholder="Payment Category Name" bind:value={selectedCategory.CategoryName} />
+        <input type="text" placeholder="Expenses Category Name" bind:value={selectedCategory.CategoryName} />
       </div>
       <div class="modal-footer">
         <button on:click={updateExpenses}>Save</button>
