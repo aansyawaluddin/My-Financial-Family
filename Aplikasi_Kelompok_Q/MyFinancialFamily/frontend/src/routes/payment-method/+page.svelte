@@ -150,10 +150,15 @@
     height: 100vh;
     box-sizing: border-box;
   }
+  .sidebar {
+    position: fixed;
+    z-index: 100;
+  }
   .content {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
+    margin-left: 200px; /* Adjust based on sidebar width */
   }
   .header {
     display: flex;
@@ -258,7 +263,9 @@
 </style>
 
 <div class="payment-method">
-  <Sidebar active="payment-method" />
+  <div class="sidebar">
+    <Sidebar active="payment-method" />
+  </div>
   <div class="content">
     <div class="header">
       <h1>Payment Methods</h1>
