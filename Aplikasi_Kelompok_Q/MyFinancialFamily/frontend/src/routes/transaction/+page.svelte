@@ -316,7 +316,7 @@
   <div class="content">
     <div class="header">
       <div>
-        <h1>Hello {categories.CategoryID}</h1>
+        <h1>Hello {user.Fullname}</h1>
       </div>
     </div>
 
