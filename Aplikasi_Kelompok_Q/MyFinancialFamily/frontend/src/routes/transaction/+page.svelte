@@ -15,7 +15,7 @@
 
   // Form inputs
   let expensescategoryid= 0;
-  let amount = 0;
+  let amount ;
   let transactiondate = '';
   let description = '';
 
@@ -132,6 +132,7 @@
 
   async function updateTransaction(transactionID) {
     const updatedTransaction = {
+      UserID: selectedTransaction.UserID,
       ExpensesCategoryID: expensescategoryid,
       Amount: amount,
       TransactionDate: transactiondate,
