@@ -401,7 +401,7 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="amount">Amount</label>
+      <label for="amount">Amount (Rp)</label>
       <input type="number" id="amount" placeholder="Input Here" bind:value={amount}>
     </div>
     <div class="form-group">

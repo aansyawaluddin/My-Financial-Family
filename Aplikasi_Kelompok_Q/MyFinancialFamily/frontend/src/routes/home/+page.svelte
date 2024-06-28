@@ -6,20 +6,14 @@
 
   let user = {};
   let familyMembers = [];
+  let desc ;
 
   // Subscribe to the store to get user data
   userStore.subscribe(value => {
     user = value || {};
   });
 
-  let transactions = [
-    { title: "GTR 5", category: "Gadget & Gear", amount: "$160.00", date: "17 May 2023" },
-    { title: "Polo Shirt", category: "XL Fashions", amount: "$20.00", date: "17 May 2023" },
-    { title: "Biryani", category: "Haji Biryani", amount: "$10.00", date: "17 May 2023" },
-    { title: "Taxi Fare", category: "Uber", amount: "$12.00", date: "17 May 2023" },
-    { title: "Keyboard", category: "Gadget & Gear", amount: "$22.00", date: "17 May 2023" }
-  ];
-
+  let transactions = [];
   let categories = [];
 
   let currentDate = new Date().toLocaleDateString('id-ID', {
@@ -45,6 +39,7 @@
       console.error("Error:", error);
     }
   }
+  
   async function ReadExpenses() {
     try {
       const response = await fetch('http://localhost:8000/categories/read-all-categories', {
@@ -58,17 +53,37 @@
         const result = await response.json();
         categories = result.categories;
       } else {
-        categories = []
+        categories = [];
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
+  async function readTransactions() {
+    try {
+      const response = await fetch('http://localhost:8000/transactions/read-all-transactions', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        transactions = result.transactions;
+      } else {
+        transactions = [];
       }
     } catch (error) {
       console.error('Error:', error);
     }
   }
 
-
   onMount(() => {
     ReadDataUser();
     ReadExpenses();
+    readTransactions();
   });
 </script>
 
@@ -79,8 +94,8 @@
     box-sizing: border-box;
   }
   .sidebar {
-    width: 160px; 
-    flex-shrink: 0; 
+    width: 160px;
+    flex-shrink: 0;
   }
   .content {
     flex: 1;
@@ -227,6 +242,7 @@
   .expense p {
     margin: 0;
     font-size: 16px;
+    margin-left: 10px;
   }
 
   /* Media queries for responsiveness */
@@ -266,7 +282,7 @@
     <div class="container">
       <div class="header">
         <h1>Hello {user.Fullname}</h1>
-        <p>{currentDate}</p> 
+        <p>{currentDate}</p>
       </div>
 
       <div class="family-members">
@@ -284,20 +300,15 @@
         <div class="transactions">
           <h2>Recent Transactions</h2>
           <div class="transactions-list">
-            <div class="tabs">
-              <button class="active">All</button>
-              <button>Revenue</button>
-              <button>Expenses</button>
-            </div>
-            {#each transactions as transaction}
+            {#each transactions.slice(0, 5) as transaction}
               <div class="transaction">
                 <div class="details">
-                  <h4>{transaction.title}</h4>
-                  <p>{transaction.category}</p>
+                  <h4>{transaction.Description}</h4>
+                  <p>ID Expenses : {transaction.ExpensesCategoryID}</p>
                 </div>
                 <div class="amount">
-                  <p>{transaction.amount}</p>
-                  <p>{transaction.date}</p>
+                  <p>Rp. {transaction.Amount}</p>
+                  <p>{transaction.TransactionDate}</p>
                 </div>
               </div>
             {/each}
@@ -311,7 +322,9 @@
               {#each categories as category}
                 <div class="expense">
                   <img src="https://i.pinimg.com/564x/fe/99/c7/fe99c72499b9be5c1f79a33b06b3d4e1.jpg" alt={category.CategoryName} width="40" height="40">
-                  <p>{category.CategoryName}</p>
+                  <p>ID : {category.CategoryID}<br>
+                    {category.CategoryName}
+                  </p>
                 </div>
               {/each}
             </div>
