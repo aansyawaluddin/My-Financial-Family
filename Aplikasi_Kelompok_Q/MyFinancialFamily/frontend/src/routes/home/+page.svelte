@@ -1,10 +1,11 @@
-<script lang="ts">
+<script>
+  // @ts-nocheck
   import { onMount } from 'svelte';
   import Sidebar from '../sidebar/+page.svelte';
   import { userStore } from '../store';
 
-  let user: { Fullname?: string } = {};
-  let familyMembers: { Fullname?: string; Role?: string; Email?: string }[] = [];
+  let user = {};
+  let familyMembers = [];
 
   // Subscribe to the store to get user data
   userStore.subscribe(value => {
@@ -19,14 +20,7 @@
     { title: "Keyboard", category: "Gadget & Gear", amount: "$22.00", date: "17 May 2023" }
   ];
 
-  let expenseCategories = [
-    { name: "Housing", icon: "🏠" },
-    { name: "Food", icon: "🍲" },
-    { name: "Transportation", icon: "🚗" },
-    { name: "Entertainment", icon: "🎬" },
-    { name: "Shopping", icon: "🛍️" },
-    { name: "Others", icon: "🔖" }
-  ];
+  let categories = [];
 
   let currentDate = new Date().toLocaleDateString('id-ID', {
     day: 'numeric',
@@ -34,7 +28,7 @@
     year: 'numeric'
   });
 
-  async function ReadData() {
+  async function ReadDataUser() {
     try {
       const response = await fetch(`http://127.0.0.1:8000/users/read-all-users`, {
         method: 'GET',
@@ -51,10 +45,30 @@
       console.error("Error:", error);
     }
   }
+  async function ReadExpenses() {
+    try {
+      const response = await fetch('http://localhost:8000/categories/read-all-categories', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        categories = result.categories;
+      } else {
+        categories = []
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
 
   onMount(() => {
-    ReadData();
+    ReadDataUser();
+    ReadExpenses();
   });
 </script>
 
@@ -294,10 +308,10 @@
           <h2>Expenses Breakdown</h2>
           <div class="expenses-list">
             <div class="expenses-grid">
-              {#each expenseCategories as category}
+              {#each categories as category}
                 <div class="expense">
-                  <span>{category.icon}</span>
-                  <p>{category.name}</p>
+                  <img src="https://i.pinimg.com/564x/fe/99/c7/fe99c72499b9be5c1f79a33b06b3d4e1.jpg" alt={category.CategoryName} width="40" height="40">
+                  <p>{category.CategoryName}</p>
                 </div>
               {/each}
             </div>
