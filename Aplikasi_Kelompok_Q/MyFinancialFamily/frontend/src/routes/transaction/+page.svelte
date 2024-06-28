@@ -15,7 +15,7 @@
 
   // Form inputs
   let expensescategoryid= 0;
-  let amount;
+  let amount = 0;
   let transactiondate = '';
   let description = '';
 
@@ -107,6 +107,7 @@
       alert("nominal sangat kecil (minimal 1000 perak)");
       return;
     }
+  
 
     try {
       const response = await fetch(`http://localhost:8000/transactions`, {
@@ -130,8 +131,6 @@
   }
 
   async function updateTransaction(transactionID) {
-    if (!selectedTransaction) return;
-
     const updatedTransaction = {
       ExpensesCategoryID: expensescategoryid,
       Amount: amount,
@@ -140,7 +139,7 @@
     };
 
     try {
-      const response = await fetch(`http://localhost:8000/transactions/transactions/${transactionID}`, {
+      const response = await fetch(`http://localhost:8000/transactions/${transactionID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -374,7 +373,7 @@
       </div>
       <div class="form-group">
         <label for="amount">Amount</label>
-        <input type="text" id="amount" placeholder="Input Here" bind:value={amount}>
+        <input type="number" id="amount" placeholder="Input Here" bind:value={amount}>
       </div>
       <div class="form-group">
         <label for="transaction-date">Transaction Date</label>
@@ -382,7 +381,7 @@
       </div>
       <div class="form-group">
         <label for="description">Description</label>
-        <input type="text" id="description" placeholder="Input Here" bind:value={description}>
+        <input type="text" id="description" placeholder="Input Here" bind:value={description} maxlength="15">
       </div>
       <button class="add-btn" on:click={addTransaction}>Add Categories</button>
     </div>
@@ -402,7 +401,7 @@
     </div>
     <div class="form-group">
       <label for="amount">Amount</label>
-      <input type="text" id="amount" placeholder="Input Here" bind:value={amount}>
+      <input type="number" id="amount" placeholder="Input Here" bind:value={amount}>
     </div>
     <div class="form-group">
       <label for="transaction-date">Transaction Date</label>
@@ -410,7 +409,7 @@
     </div>
     <div class="form-group">
       <label for="description">Description</label>
-      <input type="text" id="description" placeholder="Input Here" bind:value={description}>
+      <input type="text" id="description" placeholder="Input Here" maxlength="15" bind:value={description}>
     </div>
     <button class="add-btn" on:click={() => updateTransaction(selectedTransaction.TransactionID)}>Update Transaction</button>
   </div>

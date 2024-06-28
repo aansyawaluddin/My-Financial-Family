@@ -46,7 +46,6 @@ class PaymentMethod(BaseModel):
 
 # Pydantic model untuk entitas Transaksi
 class Transaction(BaseModel):
-    UserID: int
     ExpensesCategoryID: int
     Amount: float
     TransactionDate: str
@@ -375,8 +374,8 @@ async def read_transaction(TransactionID: int = Path(..., description="Input ID"
 
 @app.put("/transactions/{TransactionID}")
 async def update_transaction(TransactionID: int, transaction: Transaction):
-    sql = "UPDATE Transactions SET UserID = %s, ExpensesCategoryID = %s, Amount = %s, TransactionDate = %s, Description = %s WHERE TransactionID = %s"
-    val = (transaction.UserID, transaction.ExpensesCategoryID, transaction.Amount, transaction.TransactionDate, transaction.Description, TransactionID)
+    sql = "UPDATE Transactions SET ExpensesCategoryID = %s, Amount = %s, TransactionDate = %s, Description = %s WHERE TransactionID = %s"
+    val = (transaction.ExpensesCategoryID, transaction.Amount, transaction.TransactionDate, transaction.Description, TransactionID)
     mycursor.execute(sql, val)
     mydb.commit()
     return {"message": "Transaction updated successfully"}
