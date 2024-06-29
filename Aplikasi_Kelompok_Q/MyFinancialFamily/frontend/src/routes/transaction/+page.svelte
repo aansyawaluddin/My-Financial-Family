@@ -264,7 +264,7 @@
   }
   .modal-content {
     background-color: white;
-    margin: 10% auto;
+    margin: 1% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
@@ -321,7 +321,7 @@
     </div>
 
     <div>
-      <h2>Recent Transactions</h2>
+      <h2>Transactions</h2>
       <div class="buttons">
         <button class="add" on:click={openModal}>ADD</button>
       </div>
@@ -363,6 +363,7 @@
   <div class:modal={true} class:show={showModal}>
     <div class="modal-content">
       <span class="close" on:click={closeModal}>&times;</span>
+      <h2>Add New Transaction</h2>
       <div class="form-group">
         <label for="category">Category</label>
         <select id="category" bind:value={expensescategoryid}>

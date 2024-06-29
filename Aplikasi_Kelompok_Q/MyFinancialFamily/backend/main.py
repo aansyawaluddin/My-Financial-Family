@@ -305,6 +305,19 @@ async def read_all_method():
         
     else:
         raise HTTPException(status_code=404, detail="Payment method not found")
+@app.get("/payment_methods/read-all-method")
+async def read_all_method():
+    mycursor.execute("SELECT MethodID, MethodName FROM PaymentMethods")
+    result = mycursor.fetchall()
+    if result:
+        methods = [
+            {"MethodID": row[0],"MethodName": row[1],}
+            for row in result
+        ]
+        return {"methods": methods}
+    else:
+        raise HTTPException(status_code=404, detail="No payment methods found")
+
 @app.get("/payment_methods/{MethodID}")
 async def read_payment_method(MethodID: int = Path(..., description="Input ID")):
     mycursor.execute("SELECT * FROM PaymentMethods WHERE MethodID = %s", (MethodID,))
@@ -356,22 +369,26 @@ async def read_all_transactions():
         return {"transactions": transactions}
     else:
         raise HTTPException(status_code=404, detail="No transactions found")
-
-@app.get("/transactions/{TransactionID}")
-async def read_transaction(TransactionID: int = Path(..., description="Input ID")):
-    mycursor.execute("SELECT * FROM Transactions WHERE TransactionID = %s", (TransactionID,))
-    result = mycursor.fetchone()
+# Digunakan Untuk detail payment
+@app.get("/transactions/{UserID}")
+async def read_transaction(UserID: int = Path(...)):
+    mycursor.execute("SELECT * FROM Transactions WHERE UserID = %s", (UserID,))
+    result = mycursor.fetchall()
     if result:
-        return {
-            "TransactionID": result[0],
-            "UserID": result[1],
-            "ExpensesCategoryID": result[2],
-            "Amount": result[3],
-            "TransactionDate": result[4],
-            "Description": result[5]
-        }
+        transactions = [
+            {
+                "TransactionID": row[0],
+                "UserID": row[1],
+                "ExpensesCategoryID": row[2],
+                "Amount": row[3],
+                "TransactionDate": row[4],
+                "Description": row[5]
+            }
+            for row in result
+        ]
+        return {"transactions": transactions}
     else:
-        raise HTTPException(status_code=404, detail="Transaction not found")
+        raise HTTPException(status_code=404, detail="No transactions found")
 
 @app.put("/transactions/{TransactionID}")
 async def update_transaction(TransactionID: int, transaction: Transaction):
@@ -388,7 +405,7 @@ async def delete_transaction(TransactionID: int):
     return {"message": "Transaction deleted successfully"}
 
 # CRUD untuk DetailPayments
-@app.post("/detail_payments/")
+@app.post("/detail-payments/")
 async def create_detail_payment(detail_payment: DetailPayment):
     sql = "INSERT INTO DetailPayments (TransactionID, PaymentMethodID, AmountPaid, PaymentDate) VALUES (%s, %s, %s, %s)"
     val = (detail_payment.TransactionID, detail_payment.PaymentMethodID, detail_payment.AmountPaid, detail_payment.PaymentDate)
@@ -396,7 +413,25 @@ async def create_detail_payment(detail_payment: DetailPayment):
     mydb.commit()
     return {"message": "Detail payment created successfully"}
 
-@app.get("/detail_payments/{PaymentID}")
+@app.get("/detail-payments/read-all-detailpayment")
+async def read_all_detail_payments():
+    mycursor.execute("SELECT * FROM DetailPayments")
+    results = mycursor.fetchall()
+    if results:
+        detail_payments = []
+        for row in results:
+            detail_payments.append({
+                "PaymentID": row[0],
+                "TransactionID": row[1],
+                "PaymentMethodID": row[2],
+                "AmountPaid": row[3],
+                "PaymentDate": row[4]
+            })
+        return {"detail_payments": detail_payments}
+    else:
+        raise HTTPException(status_code=404, detail="No detail payments found")
+
+@app.get("/detail-payments/{PaymentID}")
 async def read_detail_payment(PaymentID: int = Path(..., description="Input ID")):
     mycursor.execute("SELECT * FROM DetailPayments WHERE PaymentID = %s", (PaymentID,))
     result = mycursor.fetchone()
@@ -410,8 +445,9 @@ async def read_detail_payment(PaymentID: int = Path(..., description="Input ID")
         }
     else:
         raise HTTPException(status_code=404, detail="Detail payment not found")
+    
 
-@app.put("/detail_payments/{PaymentID}")
+@app.put("/detail-payments/{PaymentID}")
 async def update_detail_payment(PaymentID: int, detail_payment: DetailPayment):
     sql = "UPDATE DetailPayments SET TransactionID = %s, PaymentMethodID = %s, AmountPaid = %s, PaymentDate = %s WHERE PaymentID = %s"
     val = (detail_payment.TransactionID, detail_payment.PaymentMethodID, detail_payment.AmountPaid, detail_payment.PaymentDate, PaymentID)
@@ -419,7 +455,7 @@ async def update_detail_payment(PaymentID: int, detail_payment: DetailPayment):
     mydb.commit()
     return {"message": "Detail payment updated successfully"}
 
-@app.delete("/detail_payments/{PaymentID}")
+@app.delete("/detail-payments/{PaymentID}")
 async def delete_detail_payment(PaymentID: int):
     mycursor.execute("DELETE FROM DetailPayments WHERE PaymentID = %s", (PaymentID,))
     mydb.commit()
