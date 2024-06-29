@@ -221,11 +221,11 @@
     background-color: #4285F4;
     color: white;
   }
-  .buttons .update {
+  .update {
     background-color: yellow; 
     color: black; 
   }
-  .buttons .delete {
+  .delete {
     background-color: red; 
     color: white;
   }
