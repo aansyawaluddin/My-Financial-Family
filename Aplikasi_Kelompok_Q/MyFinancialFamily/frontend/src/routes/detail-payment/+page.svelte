@@ -11,6 +11,8 @@
   let selectedTransactionId = ''; // For binding selected transaction ID
   let paymentMethods = []; // To store payment methods
   let currentDetailPayment = {}; // For holding the current detail payment to update
+  let selectedTransaction = {}; // Store selected transaction details
+  let amountPaid = ''; // Bind amountPaid input
 
   // Subscribe to userStore to get user data
   userStore.subscribe(value => {
@@ -87,9 +89,13 @@
     const newDetailPayment = {
       TransactionID: selectedTransactionId,
       PaymentMethodID: document.getElementById('paymentMethodId').value,
-      AmountPaid: document.getElementById('amountPaid').value,
+      AmountPaid: amountPaid,
       PaymentDate: document.getElementById('paymentDate').value,
     };
+    if (!selectedTransactionId || !document.getElementById('paymentMethodId').value || !amountPaid || !document.getElementById('paymentDate').value ) {
+      alert("Fill The Fields");
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:8000/detail-payments', {
@@ -179,7 +185,14 @@
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => modal.style.display = 'none'); // Hide all modals
   }
+
+  // Watch for changes in selectedTransactionId and update amountPaid accordingly
+  $: if (selectedTransactionId) {
+    selectedTransaction = transactions.find(transaction => transaction.TransactionID === selectedTransactionId) || {};
+    amountPaid = selectedTransaction.Amount || '';
+  }
 </script>
+
 
 <style>
   .detail_payment {
@@ -347,7 +360,7 @@
     <span class="close" on:click={closeModal}>&times;</span>
     <h2>Add New Detail Payment</h2>
     <div class="form-group">
-      <label for="transactionId">Transaction ID</label>
+      <label for="transactionId">Transaction</label>
       <select id="transactionId" name="transactionId" bind:value={selectedTransactionId}>
         {#each transactions as transaction}
         <option value={transaction.TransactionID}>{transaction.Description}</option>
@@ -355,7 +368,7 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="paymentMethodId">Payment Method ID</label>
+      <label for="paymentMethodId">Payment Method </label>
       <select id="paymentMethodId" name="paymentMethodId">
         {#each paymentMethods as method}
         <option value={method.MethodID}>{method.MethodName}</option>
@@ -364,7 +377,7 @@
     </div>
     <div class="form-group">
       <label for="amountPaid">Amount Paid</label>
-      <input type="number" id="amountPaid" name="amountPaid" />
+      <input type="number" id="amountPaid" name="amountPaid" bind:value={amountPaid} />
     </div>
     <div class="form-group">
       <label for="paymentDate">Payment Date</label>
@@ -380,7 +393,7 @@
     <span class="close" on:click={closeModal}>&times;</span>
     <h2>Update Detail Payment</h2>
     <div class="form-group">
-      <label for="updateTransactionId">Transaction ID</label>
+      <label for="updateTransactionId">Transaction</label>
       <select id="updateTransactionId" name="transactionId" bind:value={currentDetailPayment.TransactionID}>
         {#each transactions as transaction}
         <option value={transaction.TransactionID}>{transaction.Description}</option>
@@ -388,7 +401,7 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="updatePaymentMethodId">Payment Method ID</label>
+      <label for="updatePaymentMethodId">Payment Method</label>
       <select id="updatePaymentMethodId" name="updatePaymentMethodId" bind:value={currentDetailPayment.PaymentMethodID}>
         {#each paymentMethods as method}
         <option value={method.MethodID}>{method.MethodName}</option>

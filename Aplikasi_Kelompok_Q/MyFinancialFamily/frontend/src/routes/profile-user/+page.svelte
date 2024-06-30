@@ -87,7 +87,7 @@
   .content {
     flex: 1;
     padding: 1rem;
-    margin-left: 50px;
+    margin-left: 200px;
     overflow-y: auto;
   }
 
