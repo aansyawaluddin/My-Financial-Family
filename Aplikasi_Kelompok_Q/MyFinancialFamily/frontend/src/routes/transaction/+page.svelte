@@ -388,7 +388,7 @@
         <label for="description">Description</label>
         <input type="text" id="description" placeholder="Input Here" bind:value={description} maxlength="15">
       </div>
-      <button class="add-btn" on:click={addTransaction}>Add Categories</button>
+      <button class="add-btn" on:click={addTransaction}>Add Transaction</button>
     </div>
   </div>
 

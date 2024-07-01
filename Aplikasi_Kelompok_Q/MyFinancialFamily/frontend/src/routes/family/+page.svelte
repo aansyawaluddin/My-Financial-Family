@@ -71,7 +71,6 @@
   .content h1{
     flex-grow: 1;
     padding: 20px;
-    margin-left: 200px;
   }
   .family-members {
     display: flex;

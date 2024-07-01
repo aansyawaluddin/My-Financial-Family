@@ -300,7 +300,7 @@
   <div class="modal" on:click={closeModal}>
     <div class="modal-content" on:click|stopPropagation>
       <div class="modal-header">
-        <h2>Add Expenses</h2>
+        <h2 >Add Expenses</h2>
         <button on:click={closeModal}>Close</button>
       </div>
       <div class="modal-body">
