@@ -5,8 +5,6 @@
 
   let email = ""; // Variabel untuk menyimpan nilai input email dari pengguna
   let password = ""; // Variabel untuk menyimpan nilai input password dari pengguna
-  let rememberMe = false; // Variabel boolean untuk mengontrol opsi "Keep me signed in"
-
 
   /**
    * Fungsi handleLogin digunakan untuk menangani proses login pengguna
@@ -80,10 +78,6 @@
     <label for="password" class="form-label">Password</label>
     <a href="#" class="float-right">Forgot Password?</a>
     <input type="password" id="password" bind:value={password} class="form-control" />
-  </div>
-  <div class="form-group form-check">
-    <input type="checkbox" id="rememberMe" bind:checked={rememberMe} class="form-check-input" />
-    <label for="rememberMe" class="form-check-label">Keep me signed in</label>
   </div>
   <button class="btn btn-primary w-100" on:click={handleLogin}>Login</button>
   <div class="text-center mt-3">

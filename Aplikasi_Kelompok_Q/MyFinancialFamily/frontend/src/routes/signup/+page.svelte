@@ -8,7 +8,6 @@
   let password = "";
   let gender = "";
   let role = "";
-  let rememberMe = false;
 
   async function handleSignup() {
     const user = {

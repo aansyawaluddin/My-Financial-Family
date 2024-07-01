@@ -1,9 +1,11 @@
 <script>
   // @ts-nocheck
-  export const active = 'expenses';
   import Sidebar from '../sidebar/+page.svelte';
   import { onMount } from 'svelte';
   import { userStore } from '../store';
+
+  export const active = 'expenses';
+
   let user = {};
 
   // Subscribe untuk mengambil data pengguna dari userStore

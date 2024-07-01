@@ -13,6 +13,11 @@
 			if(window.location.pathname === '/login'){
 			sessionStorage.setItem('isLoggedIn', "false"); // Menyimpan status login di sessionStorage
 			}
+			if(window.location.pathname === '/sidebar'){
+				//tidak bisa mengakses sidebar akan kembali ke halaman sebelumny
+				history.back()
+
+			}
 		}else{
 			if(window.location.pathname === '/signup'){
 				

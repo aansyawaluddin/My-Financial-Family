@@ -182,16 +182,7 @@ async def read_username_user(Username: str = Path(...)):
                 }}
     else:
         raise HTTPException(status_code=404, detail="User not found")
-#read by familyemail
-# @app.get("/users/")
-# async def read_all_user(family_email: str = Query(...)):
-#     mycursor.execute("SELECT UserID, Username, Fullname, Password, Gender, Email, Role, FamilyEmail, is_admin FROM Users WHERE FamilyEmail = %s", (family_email,))
-#     result = mycursor.fetchall()
-#     if result:
-#         users = [{"UserID": row[0], "Username": row[1], "Fullname": row[2], "Password": row[3], "Gender": row[4], "Email": row[5], "Role": row[6], "FamilyEmail": row[7], "is_admin":row[8]} for row in result]
-#         return {"users": users}
-#     else:
-#         raise HTTPException(status_code=404, detail="No users found")
+
 
 @app.put("/users/{UserID}")
 async def update_user(UserID: int, user: User):

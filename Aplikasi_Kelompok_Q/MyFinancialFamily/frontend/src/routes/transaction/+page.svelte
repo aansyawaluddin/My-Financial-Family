@@ -242,14 +242,6 @@
   table th {
     background-color: #f2f2f2;
   }
-  .download-btn {
-    background-color: white;
-    color: #4285F4;
-    border: 1px solid #4285F4;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
   /* Modal Styles */
   .modal {
     display: none;
@@ -336,7 +328,6 @@
           <th>Amount</th>
           <th>TransactionDate</th>
           <th>Description</th>
-          <th>Receipt</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -349,7 +340,6 @@
                         <td>{transaction.Amount}</td>
             <td>{transaction.TransactionDate}</td>
             <td>{transaction.Description}</td>
-            <td><button class="download-btn">Download</button></td>
             <td>
               <button class="update" on:click={() => openUpdateModal(transaction)}>UPDATE</button>
               <button class="delete" on:click={() => deleteTransaction(transaction.TransactionID)}>DELETE</button>

@@ -4,7 +4,7 @@
   import Sidebar from '../sidebar/+page.svelte';
   import { userStore } from '../store';
 
-  export let active = 'detail-payment';
+  export const active = 'detail-payment';
   let user = {};
   let detailpayments = [];
   let transactions = [];
