@@ -173,6 +173,12 @@
   .show-overlay {
     display: block;
   }
+  .d-md-flex {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      grid-column: span 2;
+    }
 
 </style>
 
@@ -228,7 +234,7 @@
         <label for="role" class="form-label">Role</label>
         <input type="text" class="form-control" id="role" placeholder="Enter role" bind:value={updatedUser.Role} />
       </div>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <div class="d-md-flex justify-content-md-end align-items-center">
         <button class="btn btn-danger me-md-2 mb-2 mb-md-0" on:click={toggleUpdatePopup}>Cancel</button>
         <button class="btn btn-success" on:click={updateUser}>Update</button>
       </div>
