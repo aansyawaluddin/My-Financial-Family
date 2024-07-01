@@ -2,6 +2,7 @@
 	import './styles.css';
 	import 'bootstrap/dist/css/bootstrap.min.css';
 	
+	
 	//gunanya ini kode agar ketika meng akses"http://sessionhost:5173/" akan langsung terarahkan ke "http://sessionhost:5173//login"
 	import { onMount } from 'svelte';
   	import { goto } from '$app/navigation';
@@ -48,14 +49,15 @@
 		};
   });
 </script>
+<svelte:head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMQEDdOs7A4PIyjNy3JZjKVyj5S9/ub+OvRl3w4" crossorigin="anonymous">
+</svelte:head>
 
 <div class="app">
-
-
 	<main>
 		<slot />
 	</main>
-
 	<footer>
 	</footer>
 </div>
