@@ -53,7 +53,7 @@
 
 <style>
   .sidebar {
-    width: 180px;
+    width: 288px;
     height: 100vh;
     background-color: #111827;
     color: white;

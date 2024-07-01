@@ -153,14 +153,14 @@
     box-sizing: border-box;
   }
   .sidebar {
-    position: fixed;
-    z-index: 100;
+    width: 288px;
+    flex-shrink: 0;
   }
   .content {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
-    margin-left: 200px; /* Adjust based on sidebar width */
+
   }
   .header {
     display: flex;

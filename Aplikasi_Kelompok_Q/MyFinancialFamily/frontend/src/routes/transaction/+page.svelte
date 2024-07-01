@@ -188,11 +188,14 @@
     height: 100vh;
     box-sizing: border-box;
   }
+  .sidebar {
+    width: 288px;
+    flex-shrink: 0;
+  }
   .content {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
-    margin-left: 180px; 
   }
   .header {
     display: flex;
@@ -304,7 +307,9 @@
 </style>
 
 <div class="transaction">
-  <Sidebar active="transaction" />
+  <div class="sidebar">
+    <Sidebar active="transaction" />
+  </div>
   <div class="content">
     <div class="header">
       <div>

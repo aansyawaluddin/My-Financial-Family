@@ -94,7 +94,7 @@
     box-sizing: border-box;
   }
   .sidebar {
-    width: 160px;
+    width: 288px;
     flex-shrink: 0;
   }
   .content {

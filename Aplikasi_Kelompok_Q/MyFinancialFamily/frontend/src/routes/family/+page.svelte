@@ -60,12 +60,13 @@
     display: flex;
   }
   .sidebar {
-    width: 250px;
+    width: 288px;
     flex-shrink: 0;
   }
   .content {
-    flex-grow: 1;
-    padding: 20px;
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
   }
   .content h1{
     flex-grow: 1;
