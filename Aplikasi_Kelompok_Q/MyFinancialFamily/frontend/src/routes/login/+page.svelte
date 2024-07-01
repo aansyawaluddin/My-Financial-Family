@@ -64,12 +64,20 @@
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #406DD4 40%, #474343 90%);
+    justify-content: center;
+    display: flex;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 </style>
 
 <div class="container login-container">
-  <div class="text-center mb-4">
-    <h1 class="h3 mb-3 font-weight-normal">My Financial Family</h1>
-  </div>
+  <div class="logo fs-4 fw-bold text-primary mb-3">My Financial Family</div>
   <div class="form-group">
     <label for="email" class="form-label">Email Address</label>
     <input type="text" id="email" bind:value={email} class="form-control" />

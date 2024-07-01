@@ -94,7 +94,7 @@
     box-sizing: border-box;
   }
   .sidebar {
-    width: 160px;
+    width: 288px;
     flex-shrink: 0;
   }
   .content {
@@ -102,12 +102,7 @@
     padding: 1rem;
     overflow-y: auto;
   }
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f5f7;
-    margin: 0;
-    padding: 0;
-  }
+
   .container {
     padding: 20px;
   }

@@ -151,14 +151,13 @@
     box-sizing: border-box;
   }
   .sidebar {
-    position: fixed;
-    z-index: 100;
+    width: 288px;
+    flex-shrink: 0;
   }
   .content {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
-    margin-left: 200px; /* Adjust based on sidebar width */
   }
   .header {
     display: flex;
@@ -211,17 +210,20 @@
     color: white;
   }
   .update-button {
-    padding: 3px 3px;
-    font-size: 12px;
-    background-color: #ffc107;
+    background-color: #DD8704;
+    gap: 10px;
     color: white;
-    margin-left: 70px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   .delete-button {
-    padding: 3px 3px;
-    font-size: 12px;
-    background-color: #dc3545;
+    background-color: #DB3C31;
+    gap: 10px;
     color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   /* Modal styles */
   .modal {

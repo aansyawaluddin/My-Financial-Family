@@ -188,11 +188,14 @@
     height: 100vh;
     box-sizing: border-box;
   }
+  .sidebar {
+    width: 288px;
+    flex-shrink: 0;
+  }
   .content {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
-    margin-left: 180px; 
   }
   .header {
     display: flex;
@@ -222,12 +225,20 @@
     color: white;
   }
   .update {
-    background-color: yellow; 
-    color: black; 
+    background-color: #DD8704;
+    gap: 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   .delete {
-    background-color: red; 
+    background-color: #DB3C31;
+    gap: 10px;
     color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   table {
     width: 100%;
@@ -304,7 +315,9 @@
 </style>
 
 <div class="transaction">
-  <Sidebar active="transaction" />
+  <div class="sidebar">
+    <Sidebar active="transaction" />
+  </div>
   <div class="content">
     <div class="header">
       <div>

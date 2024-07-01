@@ -53,81 +53,88 @@
 
 <style>
   .sidebar {
-    width: 180px;
-    height: 100vh;
-    background-color: #111827;
-    color: white;
-    padding: 1rem;
-    position: fixed; 
+    display: flex;
+    width: 288px;
+    height: 1059px;
+    padding: 48px 28px;
+    flex-direction: column;
+    justify-content: space-between;
+
+    flex-shrink: 0;
   }
-  .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    color: #3B82F6;
-  }
-  .menu {
-    margin-top: 0.5rem;
-    flex: 1;
+  .home a:hover {
+    background-color: #0B63F8;
   }
   .menu a {
-    display: block;
-    padding: 0.75rem 1rem;
-    color: white;
-    text-decoration: none;
-    border-radius: 0.5rem;
-    margin-bottom: 0rem;
+    transition: background-color 0.3s ease;
   }
-  .menu a.active,
   .menu a:hover {
-    background-color: #2563eb; /* Warna yang sama untuk menu aktif dan menu dihover */
+    background-color: #0B63F8; 
   }
   .profile {
     display: flex;
     align-items: center;
-    padding: 1rem;
-    background-color: #1F2937;
-    border-radius: 0.5rem;
+    gap: 16px;
+    padding: 16px;
     margin-top: auto;
+    margin-bottom: auto;
   }
-  .profile img {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-right: 1rem;
-  }
-  .logout {
-    display: block;
-    padding: 0.75rem 2.9rem;
-    margin-top: 1.8rem;
-    background-color: #6B7280;
+  .profile:hover {
+    background-color: #0B63F8;
     color: white;
-    text-decoration: none;
-    cursor: pointer;
-    text-align: center;
-    border-radius: 0.5rem;
   }
-  .logout:hover{
-    background-color: #2563eb;
+.btn {
+  background-color: #444444;
+  color: white;
+}
+
+.text-decoration-none {
+  color: #BABABA;
+}
+.text-decoration-none:hover {
+  color: white;
+}
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #406DD4 40%, #474343 90%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
+
 </style>
 
-<div class="sidebar">
-  <div class="logo">My Financial Family</div>
-  <div class="menu">
-    <a href="home" class="{active === 'home' ? 'active' : ''}">Home</a>
-    <a href="expenses" class="{active === 'expenses' ? 'active' : ''}">Expenses</a>
-    <a href="payment-method" class="{active === 'payment-method' ? 'active' : ''}">Payment Method</a>
-    <a href="transaction" class="{active === 'transaction' ? 'active' : ''}">Transactions</a>
-    <a href="detail-payment" class="{active === 'detail-payment' ? 'active' : ''}">Detail Payment</a>
-    <a href="family" class="{active === 'family' ? 'active' : ''}">Family</a>
+
+
+<div class="sidebar bg-dark text-white p-3 position-fixed vh-100">
+  <div class="logo fs-4 fw-bold text-primary mb-3">My Financial Family</div>
+  <div class="menu flex-grow-1">
+    <a href="home" class="d-block p-2 mb-1 text-decoration-none rounded {active === 'home' ? 'bg-primary text-white' : ''}">
+      <i class="bi bi-house-door me-2"></i>Home
+    </a>
+    <a href="expenses" class="d-block p-2 mb-1 text-decoration-none rounded {active === 'expenses' ? 'bg-primary text-white' : ''}">
+      <i class="bi bi-cash-stack me-2"></i>Expenses
+    </a>
+    <a href="payment-method" class="d-block p-2 mb-1 text-decoration-none rounded {active === 'payment-method' ? 'bg-primary text-white' : ''}">
+      <i class="bi bi-credit-card me-2"></i>Payment Method
+    </a>
+    <a href="transaction" class="d-block p-2 mb-1 text-decoration-none rounded {active === 'transaction' ? 'bg-primary text-white' : ''}">
+      <i class="bi bi-arrow-left-right me-2"></i>Transactions
+    </a>
+    <a href="detail-payment" class="d-block p-2 mb-1 text-decoration-none rounded {active === 'detail-payment' ? 'bg-primary text-white' : ''}">
+      <i class="bi bi-info-circle me-2"></i>Detail Payment
+    </a>
+    <a href="family" class="d-block p-2 mb-1 text-decoration-none rounded {active === 'family' ? 'bg-primary text-white' : ''}">
+      <i class="bi bi-people me-2"></i>Family
+    </a>
   </div>
-  <div class="profile">
-    <img src={"https://i.pinimg.com/474x/a3/f4/bc/a3f4bc0dc7d1b030b782c62d7a4781cf.jpg"} alt="Profile Picture" /> <!-- Ganti dengan sumber gambar profil dari data pengguna -->
+  <div class="profile d-flex align-items-center p-3 rounded mt-3">
+    <img src={"https://i.pinimg.com/474x/a3/f4/bc/a3f4bc0dc7d1b030b782c62d7a4781cf.jpg"} alt="Profile Picture" class="rounded-circle me-3" style="width: 40px; height: 40px;" />
     <div>
-      <div>{user.Username}</div> 
-      <a href="profile-user">View profile</a>
+      <div>{user.Username}</div>
+      <a href="profile-user" class="text-decoration-none ">View profile</a>
     </div>
   </div>
-  <button on:click={logout} class="logout">Logout</button>
+  <button on:click={logout} class="btn w-100 mt-3">Logout</button>
 </div>

@@ -83,11 +83,13 @@
     height: 100vh;
     box-sizing: border-box;
   }
-
+  .sidebar {
+    width: 288px;
+    flex-shrink: 0;
+  }
   .content {
     flex: 1;
     padding: 1rem;
-    margin-left: 200px;
     overflow-y: auto;
   }
 
@@ -97,9 +99,8 @@
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     max-width: 600px;
-    margin-left: 190px;
-    margin-top: 50px;
     text-align: center;
+    margin: 50px auto; 
   }
 
   .profile-card h2 {
@@ -110,31 +111,19 @@
   .profile-card p {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
-    display: flex;
-    justify-content: space-between;
+    text-align: left; 
   }
 
   .btn-update {
-    background-color: #face6f;
-    color: #fff;
-    border: none;
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 1rem;
     width: 100%;
-    max-width: 200px; /* Limit maximum width */
-    margin: 0 auto; /* Center button */
+    max-width: 200px;
+    margin: 0 auto;
   }
-
-  .btn-update:hover {
-    background-color: #f8b82f;
-  }
-
+  /* Update popup */
   .update-popup {
-    position: fixed;
-    top: 48%;
-    left: 57%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
     padding: 2rem;
@@ -170,96 +159,80 @@
     box-sizing: border-box;
   }
 
-  .update-popup .buttons {
-    grid-column: span 1; /* Span buttons across both columns */
-    display: flex;
-    justify-content: space-between; /* Align buttons side by side */
+    .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    display: none;
   }
 
-  .update-popup .btn-cancel,
-  .update-popup .btn-update {
-    width: calc(52% - 1rem); 
-    margin-top: 15px;/* Equal width, with 0.5rem spacing in between */
-    margin-bottom: 15px;/* Equal width, with 0.5rem spacing in between */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
+  .show-overlay {
+    display: block;
   }
 
-  .update-popup .btn-cancel {
-    background-color: #fc8787;
-    color: #fff;
-  }
-
-  .update-popup .btn-update {
-    background-color: #face6f;
-    color: #fff;
-  }
-
-  .update-popup .btn-cancel:hover {
-    background-color: #fd4545;
-  }
-
-  .update-popup .btn-update:hover {
-    background-color: #fcb419;
-  }
 </style>
 
 <div class="page-profile">
-  <Sidebar active="page-profile" />
+  <div class="sidebar">
+    <Sidebar active="page-profile" />
+  </div>
   <div class="content">
     <div class="profile-card">
       {#if user.is_admin === 1}
-        <h2>Profile Information (Admin)</h2>
+        <h2 class="mb-4">Profile Information (Admin)</h2>
       {:else}
-        <h2>Profile Information</h2>
+        <h2 class="mb-4">Profile Information</h2>
       {/if}
-      <p><strong>User ID:</strong> {user.UserID}</p>
-      <p><strong>Username:</strong> {user.Username}</p>
-      <p><strong>Fullname:</strong> {user.Fullname}</p>
-      <p><strong>Email:</strong> {user.Email}</p>
-      <p><strong>Gender:</strong> {user.Gender}</p>
-      <p><strong>Role:</strong> {user.Role}</p>
-      <button class="btn-update" on:click={toggleUpdatePopup}>Update Profile</button>
+      <p class="mb-2"><strong>User ID:</strong> {user.UserID}</p>
+      <p class="mb-2"><strong>Username:</strong> {user.Username}</p>
+      <p class="mb-2"><strong>Fullname:</strong> {user.Fullname}</p>
+      <p class="mb-2"><strong>Email:</strong> {user.Email}</p>
+      <p class="mb-2"><strong>Gender:</strong> {user.Gender}</p>
+      <p class="mb-4"><strong>Role:</strong> {user.Role}</p>
+      <button class="btn btn-warning btn-update mb-4" on:click={toggleUpdatePopup}>Update Profile</button>
     </div>
 
     {#if showUpdatePopup}
-      <div class="update-popup">
-        <h2>Update Profile</h2>
-        <div>
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Enter username" bind:value={updatedUser.Username} />
-        </div>
-        <div>
-          <label for="fullname">Full Name</label>
-          <input type="text" id="fullname" placeholder="Enter full name" bind:value={updatedUser.Fullname} />
-        </div>
-        <div>
-          <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="Enter email address" bind:value={updatedUser.Email} />
-        </div>
-        <div>
-          <label for="password">Password</label>
-          <input type="password" id="password" bind:value={updatedUser.Password} on:input={() => isPasswordChanged = true} />
-        </div>
-        <div>
-          <label for="gender">Gender</label>
-          <select id="gender" bind:value={updatedUser.Gender}>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-        <div>
-          <label for="role">Role</label>
-          <input type="text" id="role" placeholder="Enter role" bind:value={updatedUser.Role} />
-        </div>
-        <div class="buttons">
-          <button class="btn-cancel" on:click={toggleUpdatePopup}>Cancel</button>
-          <button class="btn-update" on:click={updateUser}>Update</button>
-        </div>
+    <div class="overlay show-overlay"></div>
+    <div class="update-popup bg-light p-4 rounded shadow-lg">
+      <h2 class="mb-4">Update Profile</h2>
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter username" bind:value={updatedUser.Username} />
       </div>
+      <div class="mb-3">
+        <label for="fullname" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="fullname" placeholder="Enter full name" bind:value={updatedUser.Fullname} />
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email address" bind:value={updatedUser.Email} />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" bind:value={updatedUser.Password} on:input={() => isPasswordChanged = true} />
+      </div>
+      <div class="mb-3">
+        <label for="gender" class="form-label">Gender</label>
+        <select id="gender" class="form-select" bind:value={updatedUser.Gender}>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="role" class="form-label">Role</label>
+        <input type="text" class="form-control" id="role" placeholder="Enter role" bind:value={updatedUser.Role} />
+      </div>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class="btn btn-danger me-md-2 mb-2 mb-md-0" on:click={toggleUpdatePopup}>Cancel</button>
+        <button class="btn btn-success" on:click={updateUser}>Update</button>
+      </div>
+    </div>
     {/if}
   </div>
 </div>
