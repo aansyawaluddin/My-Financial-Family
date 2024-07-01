@@ -64,13 +64,25 @@
 </script>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #406DD4 40%, #474343 90%);
+    justify-content: center;
+    display: flex;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title text-center mb-4">My Financial Family</h5>
+          <div class="logo fs-4 fw-bold text-primary mb-3">My Financial Family</div>
           <div class="form-group mb-3">
             <label for="username">Username</label>
             <input type="text" class="form-control" id="username" bind:value={username} maxlength="10" placeholder="Masukkan Username (maks 10)"/>

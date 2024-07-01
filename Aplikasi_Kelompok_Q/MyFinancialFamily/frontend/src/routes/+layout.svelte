@@ -1,6 +1,7 @@
 <script>
 	import './styles.css';
 	import 'bootstrap/dist/css/bootstrap.min.css';
+
 	
 	
 	//gunanya ini kode agar ketika meng akses"http://sessionhost:5173/" akan langsung terarahkan ke "http://sessionhost:5173//login"
@@ -47,7 +48,7 @@
 		return () => {
 		window.removeEventListener('popstate', handlePopState); // Hapus event listener saat komponen di-unmount
 		};
-  });
+});
 </script>
 <svelte:head>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">

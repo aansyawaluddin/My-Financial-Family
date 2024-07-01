@@ -102,12 +102,7 @@
     padding: 1rem;
     overflow-y: auto;
   }
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f5f7;
-    margin: 0;
-    padding: 0;
-  }
+
   .container {
     padding: 20px;
   }

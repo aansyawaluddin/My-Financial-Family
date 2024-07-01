@@ -213,17 +213,20 @@
     color: white;
   }
   .update-button {
-    padding: 3px 3px;
-    font-size: 12px;
-    background-color: #ffc107;
+    background-color: #DD8704;
+    gap: 10px;
     color: white;
-    margin-left: 70px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   .delete-button {
-    padding: 3px 3px;
-    font-size: 12px;
-    background-color: #dc3545;
+    background-color: #DB3C31;
+    gap: 10px;
     color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   /* Modal styles */
   .modal {

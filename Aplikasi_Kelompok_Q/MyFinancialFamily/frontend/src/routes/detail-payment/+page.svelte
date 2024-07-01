@@ -303,12 +303,20 @@
     cursor: pointer;
   }
   .update {
-    background-color: yellow;
-    color: black;
+    background-color: #DD8704;
+    gap: 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
   .delete {
-    background-color: red;
+    background-color: #DB3C31;
+    gap: 10px;
     color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
   }
 </style>
 
